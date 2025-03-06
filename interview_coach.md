@@ -65,7 +65,7 @@ Since this is a transcript-only analysis, focus your feedback on the *verbal con
    </laddering_technique>
    <interviewing_users>
    {{ $('Load Interviewing Users').item.json.interviewing_users }}
-   <interviewing_users>
+   </interviewing_users>
    <jbtd>
    {{ $('Load JTBD').item.json.jobs_framework }}
    </jbtd>
