@@ -42,3 +42,15 @@ This JSON file defines the N8n workflow for the interview analysis and coaching 
 * Anthropic Sonnet Model: Used as a Deep Research Agent within the workflow for tasks requiring a different approach or perspective compared to the Gemini models.
 * Firecrawl API: This is a web scraping API used to extract content from web pages. The workflow uses Firecrawl to retrieve relevant articles and resources for the coaching feedback.
 * SerpAPI: This is a search engine results page (SERP) API used to access Google search results. The workflow utilizes SerpAPI to find relevant articles and resources based on the generated search queries.
+ 
+
+### 5. 📄 PaperGrader.json - The Final Paper Grader
+
+This JSON file defines another workflow, this time designed to automate the grading and feedback process for student final papers on product strategy. It leverages similar technologies and tools as the InterviewGrader.json workflow, including:
+
+* n8n: n8n is again used as the workflow automation tool, orchestrating the flow of data and actions based on the defined nodes and connections.
+* LlamaIndex: This is a tool that helps with analyzing and extracting information from documents. In this workflow, LlamaIndex is used to parse the student papers and identify any missing sections based on the defined criteria.
+* Google Gemini Chat Model: The Google Gemini chat model is used for natural language processing and generation tasks, such as evaluating the papers based on the rubric, generating feedback, and suggesting improvements.
+* Class Transcripts: The workflow incorporates class transcripts as context for the language model, ensuring the feedback is relevant to the course content and learning objectives.
+
+This workflow is triggered when a chat message is received, likely initiating the process of uploading and analyzing the student papers. The JSON file provides the necessary instructions and configurations for n8n to manage the workflow, ensuring an efficient and automated grading process.
