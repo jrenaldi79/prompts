@@ -593,7 +593,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer fc-99efabccee814d0fb304484f39a7279c"
+              "value": "Bearer <api_key> fc-99efabccee814d0fb304484f39a7279c"
             }
           ]
         },
@@ -711,7 +711,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer fc-99efabccee814d0fb304484f39a7279c"
+              "value": "Bearer <api_key> fc-99efabccee814d0fb304484f39a7279c"
             },
             {
               "name": "Content-Type",
@@ -758,7 +758,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer fc-99efabccee814d0fb304484f39a7279c"
+              "value": "Bearer <api_key> fc-99efabccee814d0fb304484f39a7279c"
             }
           ]
         },
@@ -1390,7 +1390,7 @@
             },
             {
               "name": "api_key",
-              "value": "93b06fbc144ef03f95cb2d2150c850783d6fffad66157abb12e2f69456ad4300"
+              "value": "<api_key>"
             },
             {
               "name": "device",
