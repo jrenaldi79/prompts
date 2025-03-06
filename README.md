@@ -44,7 +44,7 @@ This JSON file defines the N8n workflow for the interview analysis and coaching 
 * SerpAPI: This is a search engine results page (SERP) API used to access Google search results. The workflow utilizes SerpAPI to find relevant articles and resources based on the generated search queries.
  
 
-### 5. 📄 PaperGrader.json - The LLM Paper Grader
+### 2. 📄 PaperGrader.json - The LLM Paper Grader
 
 This JSON file defines another workflow, this time designed to automate the grading and feedback process for student final papers on product strategy. It leverages similar technologies and tools as the InterviewGrader.json workflow, including:
 
