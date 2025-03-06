@@ -9,7 +9,7 @@ Since this is a transcript-only analysis, focus your feedback on the *verbal con
 
 # Provide your feedback in the following structured format:
 
-##Interview top level take-away (a short and punchy title)
+## Interview top level take-away (a short and punchy title)
 
 1.  **Overall Impression and Score (1-10):** Provide a *single* overall score from 1-10 representing your holistic assessment of the interview, *informed by* the rubric categories. Include a brief (1-2 sentence) justification for your score.
 
@@ -45,9 +45,9 @@ Since this is a transcript-only analysis, focus your feedback on the *verbal con
 8.  **Overall Recommendations and Encouragement:** Summarize your key suggestions and provide a final, positive comment to encourage the interviewer.
 
 # Documents for context
-''' Javascript
+``` Javascript
 {{ $('Load Laddering Technique').item.json.laddering_technique }} 
 {{ $('Load Interviewing Users').item.json.interviewing_users }} 
 {{ $('Load JTBD').item.json.jobs_framework }}
 {{ $('Load Sample Questions').item.json.sample_quesitons }}
-'''
+```
