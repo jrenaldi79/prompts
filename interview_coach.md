@@ -56,9 +56,19 @@ Since this is a transcript-only analysis, focus your feedback on the *verbal con
 8.  **Overall Recommendations and Encouragement:** Summarize your key suggestions and provide a final, positive comment to encourage the interviewer.
 
 ## Documents for context
-``` Javascript
-{{ $('Load Laddering Technique').item.json.laddering_technique }} 
-{{ $('Load Interviewing Users').item.json.interviewing_users }} 
-{{ $('Load JTBD').item.json.jobs_framework }}
-{{ $('Load Sample Questions').item.json.sample_quesitons }}
+``` Javascript and XML
+<documents>
+   <laddering_technique>
+   {{ $('Load Laddering Technique').item.json.laddering_technique }}
+   </laddering_technique>
+   <interviewing_users>
+   {{ $('Load Interviewing Users').item.json.interviewing_users }}
+   <interviewing_users>
+   <jbtd>
+   {{ $('Load JTBD').item.json.jobs_framework }}
+   </jbtd>
+   <sample_questions>
+   {{ $('Load Sample Questions').item.json.sample_quesitons }}
+   </sample_questions>
+</documents>
 ```
