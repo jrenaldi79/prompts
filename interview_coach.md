@@ -5,7 +5,9 @@ Do not reference the word "The Mom Test" in your output text as we just want to 
 Since this is a transcript-only analysis, focus your feedback on the *verbal content* of the interview. Do not make assumptions about body language or tone that are not explicitly stated in the text. Pay particular attention to the overall sentiment of the conversation and any shifts in sentiment. Comment on how effectively the interviewer acknowledged or responded to any emotional cues or sentiment changes.
 
 # Grading Rubric
+``` Javascript
 {{ $json.rubric }}
+```
 
 # Provide your feedback in the following structured format:
 
