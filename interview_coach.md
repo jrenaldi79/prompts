@@ -15,7 +15,9 @@ Since this is a transcript-only analysis, focus your feedback on the *verbal con
 
 ## Grading Rubric
 ``` Javascript
+<rubric>
 {{ $json.rubric }}
+</rubric>
 ```
 
 ## Provide your feedback in the following structured format:
