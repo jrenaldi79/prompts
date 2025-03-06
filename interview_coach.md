@@ -1,7 +1,7 @@
 # User Prompt
 ``` XML
 <transcript>
-{{ $('Supabase').item.json.final_text }}
+{{ $json.final_text }}
 </transcript>
 ```
 
