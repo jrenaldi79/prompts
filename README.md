@@ -1,7 +1,7 @@
-#Readme
+# Readme
 
-## Feature Breakdown
-1. 📊 rubric.md - The Interview Scoring Rubric
+## Included Files
+**1. 📊 rubric.md - The Interview Scoring Rubric**
 This file provides a detailed rubric for evaluating user interviews across five key categories:
 
 * Establishing Rapport: This category assesses the interviewer's ability to build a connection with the interviewee and create a comfortable environment for open communication.
@@ -12,7 +12,7 @@ This file provides a detailed rubric for evaluating user interviews across five 
 
 Each category has a detailed scoring scale (1-10) with specific criteria for each level. This rubric helps ensure consistent and objective evaluation of interviews, providing valuable feedback to interviewers.
 
-2. 📝 interview_summary.md - The Interview Summary Template
+**2. 📝 interview_summary.md - The Interview Summary Template**
 This file is a comprehensive prompt designed to generate detailed summaries of user interviews. It employs several best practices for prompt engineering, including:
 
 * Clear Instructions: The prompt provides specific instructions on the desired output format, ensuring the generated summary is structured and easy to understand.
@@ -23,12 +23,12 @@ This file is a comprehensive prompt designed to generate detailed summaries of u
 
 By following these best practices, the prompt effectively guides the language model to generate high-quality interview summaries that capture key insights and observations.
 
-3. 👩‍🏫 interview_coach.md - The Interview Coaching Guide
+**3. 👩‍🏫 interview_coach.md - The Interview Coaching Guide**
 This file is another comprehensive prompt designed to generate constructive feedback for junior researchers on their interview skills. It incorporates similar best practices for prompt engineering as the interview_summary.md prompt, including clear instructions, role-playing, specificity, constraints, and examples.
 
 In addition, this prompt includes a section for "Documents for context," which provides the language model with access to reference documents on interviewing users, the laddering technique, and sample questions. This ensures the feedback is grounded in established best practices and research methodologies.
 
-4. ⚙️ InterviewGrader.json - Import into N8n
+**4. ⚙️ InterviewGrader.json - Import into N8n**
 This workflow requires n8n to import and execute the defined steps. The JSON file provides the necessary instructions and configurations for n8n to orchestrate the process, ensuring a smooth and efficient flow of data and actions.
 
 This JSON file defines the N8n workflow for the interview analysis and coaching tool. It outlines the steps involved in loading data, generating queries, editing results, and providing feedback. This workflow utilizes several technologies and tools, including:
