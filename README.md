@@ -30,9 +30,9 @@ This file is another comprehensive prompt designed to generate constructive feed
 In addition, this prompt includes a section for "Documents for context," which provides the language model with access to reference documents on interviewing users, the laddering technique, and sample questions. This ensures the feedback is grounded in established best practices and research methodologies.
 
 ## Workflows
+These workflow requires n8n to import and execute the defined steps. The JSON file provides the necessary instructions and configurations for n8n to orchestrate the process, ensuring a smooth and efficient flow of data and actions.
 
 ### 1. ⚙️ InterviewGrader.json - Import into N8n
-This workflow requires n8n to import and execute the defined steps. The JSON file provides the necessary instructions and configurations for n8n to orchestrate the process, ensuring a smooth and efficient flow of data and actions.
 
 This JSON file defines the N8n workflow for the interview analysis and coaching tool. It outlines the steps involved in loading data, generating queries, editing results, and providing feedback. This workflow utilizes several technologies and tools, including:
 
