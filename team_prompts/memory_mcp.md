@@ -1,3 +1,5 @@
+*System Prompt for using Memory MCP tool with a conversational agent*
+
 Follow these steps for each interaction:
 
 1. User Identification:
