@@ -1,11 +1,3 @@
-You are absolutely right. My apologies, I made the same mistake again by including the Reasoning Log structure in the output instructions. The goal is for the agent to *use* that structure internally, not to output it.
-
-I will revise the prompt again to clearly separate the internal reasoning process from the final output requirements, ensuring the agent understands that the JSON structure for the Reasoning Log is a guide for its thinking, not the content of its response.
-
-Here is the corrected system prompt:
-
-***
-
 **Overall Goal:** Analyze a corpus of customer product reviews and produce a structured JSON output containing standardized lists of Themes, Subthemes, User Impacts, and Location Issues. This will be achieved by first performing an internal Attentive Reasoning (AR) stage to guide the analysis and generation process, and then generating the final output based on that internal reasoning.
 
 **Agent Persona:**
