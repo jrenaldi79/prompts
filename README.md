@@ -32,7 +32,7 @@ In addition, this prompt includes a section for "Documents for context," which p
 ## Workflows
 These workflow requires n8n to import and execute the defined steps. The JSON file provides the necessary instructions and configurations for n8n to orchestrate the process, ensuring a smooth and efficient flow of data and actions.
 
-### 1. ⚙️ InterviewGrader.json - Coaching LLM Chain + Deep Research Agent
+### 1. ⚙️ interview_grader.json - Coaching LLM Chain + Deep Research Agent
 
 This JSON file defines the N8n workflow for the interview analysis and coaching tool. It outlines the steps involved in loading data, generating queries, editing results, and providing feedback. This workflow utilizes several technologies and tools, including:
 
@@ -44,7 +44,7 @@ This JSON file defines the N8n workflow for the interview analysis and coaching 
 * SerpAPI: This is a search engine results page (SERP) API used to access Google search results. The workflow utilizes SerpAPI to find relevant articles and resources based on the generated search queries.
  
 
-### 2. 📄 PaperGrader.json - The LLM Paper Grader
+### 2. 📄 paper_grader.json - The LLM Paper Grader
 
 This JSON file defines another workflow, this time designed to automate the grading and feedback process for student final papers on product strategy. It leverages similar technologies and tools as the InterviewGrader.json workflow, including:
 
