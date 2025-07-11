@@ -151,7 +151,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer fc-99efabccee814d0fb304484f39a7279c"
+              "value": "Bearer [API_KEY_HERE]"
             }
           ]
         },
@@ -196,7 +196,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer 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"
+              "value": "Bearer [API_KEY_HERE]"
             },
             {
               "name": "Application",
