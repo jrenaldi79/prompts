@@ -291,7 +291,7 @@
           "parameters": [
             {
               "name": "X-API-Key",
-              "value": "paynearme_key_ghi789"
+              "value": "[API_KEY_HERE]"
             }
           ]
         },
