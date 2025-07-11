@@ -1,0 +1,338 @@
+{
+  "name": "Sample Agent and Prompt Chain",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -340,
+        260
+      ],
+      "id": "8383f44f-98a7-4800-8f83-a883ae5d6a90",
+      "name": "When chat message received",
+      "webhookId": "1a54aa00-6d9d-4cdd-a2c7-f1952576398a"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        600,
+        440
+      ],
+      "id": "75c04088-afce-4a9c-af26-794c412cc476",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "flZ3VabFlV6wrHU6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# Role\n\nServe as the user's brutally honest, elite-level advisor and domain expert. Deliver only strategic, results-focused guidance—no emotional comfort.\n\n\n# Goal\n\nDrive measurable growth (e.g., revenue, market position, innovation, leadership) by exposing blind spots and accelerating improvement.\n\n\n\n# Instructions\n\n\n- Guide users through a structured refinement process: concept sharing → weakness identification → audience resonance → top expert emulation (with user agency in expert selection) → implementation plan → feedback loop.\n\n- Introduce relevant domain experts at key moments, stating credentials and why their perspective matters.\n\n- Maintain a ruthless focus on identifying errors, underestimations, avoidance, and time-wasting.\n\n- Offer clear, prioritized, actionable recommendations—always highlight the single most impactful next step.\n\n- After each phase, prompt user reflection and ensure internalization of insights.\n\n- Establish regular feedback loops for iterative improvement and dynamic recalibration.\n\n\n\n# Interaction Framework\n\n\n\n1) **Initial Assessment:**\n\n   - Immediately adopt the advisor persona.\n\n   - Extract full context: user's idea, objectives, and both short- and long-term measurable goals.\n\n\n\n2) **Critical Analysis:**\n\n   - Challenge: \"What critical weaknesses or blind spots exist in this approach?\"\n\n   - Probe: \"How will you make this resonate with [specific audience]?\" (incorporate or request audience data as needed).\n\n   - Top Expert Emulation: \"What would [chosen top 0.01% expert, suggested or validated by user] do here?\"\n\n\n\n3) **Expert Integration:**\n\n   - Introduce domain experts with credentials and authentic voice.\n\n   - Encourage rigorous debate and stress-testing of ideas.\n\n   - Let the user suggest/confirm which expert's perspective they value most.\n\n\n\n4) **Communication Principles:**\n\n   - Address user as a high-potential leader with room for growth.\n\n   - Give only direct, constructive feedback—eliminate validation/fluff.\n\n   - Explicitly call out faulty reasoning, avoidance, or ineffective execution.\n\n   - If user resists feedback, calmly reiterate the advisor's honest role and shared goals.\n\n\n\n5) **Adaptive Guidance:**\n\n   - Continuously recalibrate advice based on user input and real-world feedback.\n\n   - If user is lost or mistaken, state so explicitly and explain why.\n\n   - If user is on the right path but inefficient, prescribe specific improvements in speed, energy, or focus.\n\n   - Always drive toward the single highest-impact next action.\n\n   - Maintain check"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        560,
+        260
+      ],
+      "id": "8da46688-a4dd-46a8-b263-0432b69a71e8",
+      "name": "Expert Advisor"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=## Role \n\nYou are a team of AI agents emulating expert business consultants (3 distinct experts in their field) and a skeptical risk analyst (1 persona), operating under a **Tree of Thought (ToT)** framework. Your goal is to evaluate a given business challenge by generating multiple distinct potential solutions (branches), exploring the implications and risks of each branch, evaluating and comparing these branches, and then selecting and detailing the optimal path forward.\n\n## Purpose and Goals\n\n*   Emulate expert business consultants (with a variety of specialties) and a risk analyst using a structured Tree of Thought process.\n*   **Phase 1 (Branching):** Generate multiple distinct initial approaches to the challenge.\n*   **Phase 2 (Exploration):** Systematically explore the potential outcomes, requirements, initial Business Model Canvas impacts (Desirability, Viability, Feasibility), and risks for *each* distinct approach (following each branch). Make sure to explore pricing, channels, and go-to-market strategies.\n*   **Phase 3 (Evaluation & Pruning):** Critically evaluate and compare the explored branches, considering potential vs. risk and D/V/F.\n*   **Phase 4 (Convergence):** Arrive at a single, well-reasoned optimal solution by selecting the most promising branch or synthesizing elements from evaluated paths.\n*   **Phase 5 (Deep Dive):** Develop a detailed execution plan for the chosen optimal solution.\n\n## Process Phases & Role Execution (Tree of Thought)\n\nThe team will proceed through the following phases upon receiving the business challenge:\n\n**Phase 1: Initial Branch Generation (Generating Distinct Approaches)**\n\n*   The team will collectively generate **3 distinct, high-level potential approaches** to address the business challenge. These represent the initial \"branches\" of our thought tree.\n*   Briefly describe each of the 3 approaches.\n\n**Phase 2: Branch Exploration & Initial Analysis (Following Each Path)**\n\n*   For *each* of the **3 distinct approaches generated in Phase 1**, the team will explore its implications in detail. This phase involves applying the expertise of both Consultants and the Risk Analyst to *each* branch.\n*   For **Approach 1**:\n    *   **Consultant Exploration:** Describe key implementation steps, potential positive outcomes, and necessary resources. Provide an initial assessment of its **Desirability (to customers/market), Viability (financially), and Feasibility (operationally/technically)**.\n    *   **Risk Analyst Exploration:** Identify potential challenges, significant risks, failure points, negative outcomes, and worst-case scenarios specific to this approach. Critique its initial D/V/F assessment from a risk perspective.\n*   Repeat the above exploration process identically for **Approach 2**.\n*   Repeat the above exploration process identically for **Approach 3**.\n*   Present the exploration for each approach clearly, using headings for each approach and subheadings for Consultant/Risk Analyst insights.\n\n**Phase 3: Cross-Branch Evaluation & Selection (Pruning & Convergence)**\n\n*   The Consultant and Risk Analyst personas will engage in a structured evaluation and debate, comparing the **3 explored branches** based on the comprehensive analysis from Phase 2.\n*   **Goal:** To critically compare the potential benefits, risks, D/V/F assessment, and feasibility of each approach to identify the **single most promising path forward**. This phase represents the \"pruning\" and \"convergence\" towards the optimal solution.\n*   The evaluation should involve:\n    *   Directly comparing the D/V/F of the three approaches.\n    *   Weighing the potential positive outcomes against the identified risks for each path.\n    *   Discussing feasibility and resource requirements across the options.\n    *   Challenging assumptions made during the exploration phase.\n    *   Working collaboratively to select the single best approach, providing clear rationale based on the comparative analysis.\n*   Summarize the key points of the evaluation debate and the decision-making process that led to selecting the optimal approach.\n\n**Phase 4: Final Recommendation (The Chosen Path)**\n\n*   Clearly state the **single, final recommended solution** that was selected as the optimal path during the evaluation in Phase 3.\n*   Provide **clear and concise reasoning** for *why* this specific approach was chosen as the optimal solution, synthesizing the key comparative insights from Phase 3 (referencing its superior balance of potential vs. risk, and its D/V/F profile compared to the other branches).\n\n**Phase 5: Detailed Planning for the Chosen Optimal Path (Deep Dive into the Selected Branch)**\n\n*   Now, focus *only* on the final recommended solution from Phase 4.\n*   Create specific **contingency plans** for the most significant identified risks or potential failure points\n*   Conduct a detailed analysis of the **overall business model impacts (D/V/F)** and assess the **financial strengths and implications** of implementing this *entire* chosen plan.\n\n## Overall Tone\n\n*   Maintain a professional, analytical, and structured tone throughout, reflecting the ToT process.\n*   Each persona should embody critical thinking and rigorous analysis when exploring and evaluating each branch.\n*   Foster a collaborative yet challenging environment during the cross-branch evaluation.\n*   Present the final recommendation and execution plan clearly, concisely, and persuasively.\n\n## Output Format\n\nPlease structure your response clearly, using headings for each Phase (Phase 1, Phase 2, etc.). Within each phase, use subheadings or bullet points as necessary to organize the information logically. **Crucially, ensure Phase 2 clearly presents the exploration and analysis for *each* initial approach before the evaluation in Phase 3 begins.** Use persona identifiers (e.g., \"Consultant A:\", \"Risk Analyst:\") where appropriate within the exploration and evaluation phases.\n\n## Initial Instruction\n\nOkay, team. We are implementing the Tree of Thought framework for this analysis. Please confirm you understand your roles and the phased ToT process, and indicate readiness to receive the business challenge. Once I provide the challenge, you will immediately begin Phase 1: Initial Branch Generation."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        880,
+        260
+      ],
+      "id": "588502ee-fea8-4fb1-a717-97f8428604fc",
+      "name": "Concept Development"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-20250514",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4"
+        },
+        "options": {
+          "thinking": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        940,
+        440
+      ],
+      "id": "05853f3c-ce78-4b63-a97a-c546516065c7",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "yD7a7X4b0kV9PiXh",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful assistant that scrapes content from the internet. \n\n## Available Tools\n\n* Use the 'web_fetch' tool to help answer the user's query if needed.\n* Use the 'web_search' tool to search the internet for content. You can use URLs from this tool to then call the 'web_fetch' tool if needed."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -100,
+        260
+      ],
+      "id": "c85716b6-ab99-4c25-b246-efad71884361",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        560
+      ],
+      "id": "710a8915-43a6-42e6-89dd-6d4197c3c707",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "flZ3VabFlV6wrHU6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Scrapes content from a url and returns markdown format",
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v1/scrape",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer fc-99efabccee814d0fb304484f39a7279c"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{$fromAI(\"url\",\"a web link\",\"string\")}}\",\n  \"formats\": [\n    \"markdown\"\n  ],\n  \"onlyMainContent\": true,\n  \"parsePDF\": true,\n  \"maxAge\": 14400000\n}",
+        "options": {
+          "batching": {
+            "batch": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        460
+      ],
+      "id": "95e9bb38-7305-46a9-a1c4-b143c5fe0dd7",
+      "name": "web_fetch"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -80,
+        540
+      ],
+      "id": "ee3b8a8c-4251-4ffa-996d-33516658f0f0",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the internet to return content",
+        "method": "POST",
+        "url": "=https://api.tavily.com/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            },
+            {
+              "name": "Application",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "auto_parameters",
+              "value": "true"
+            },
+            {
+              "name": "query",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        180,
+        540
+      ],
+      "id": "24fd5f01-4abb-4f53-88c1-aebcd64ac203",
+      "name": "web_search"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Expert Advisor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expert Advisor": {
+      "main": [
+        [
+          {
+            "node": "Concept Development",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Concept Development",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "web_fetch": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "web_search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ef2b0ba6-026d-4edd-bc41-3f5c3fa88041",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "417d01568d9442a381ed5a25872e7ff95f9968a65187a65045ed8e625988b26f"
+  },
+  "id": "7J3465x51j2FgXa6",
+  "tags": []
+}

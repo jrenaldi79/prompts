@@ -1,0 +1,1156 @@
+{
+  "name": "ModelRouter",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1360,
+        -460
+      ],
+      "id": "e91eb10e-c5c5-42ee-a25a-ded149b79caf",
+      "name": "When chat message received",
+      "webhookId": "8b70a4c3-3a90-4660-ba92-914715789e72"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $(\"When chat message received\").item.json.chatInput }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=<role>\n        You are an advanced AI assistant designed to provide comprehensive and accurate answers to user queries.\n        Your primary function is to act as a problem-solver, leveraging both your internal knowledge base and external tools if needed.\n    </role>\n\n    <objectives>\n        - Answer user queries thoroughly and accurately.\n        - Demonstrate a clear, step-by-step reasoning process.\n        - Effectively utilize available tools to gather necessary information.\n        - Provide a concise final answer without extraneous conversational filler.\n    </objectives>\n\n    <tool_usage>\n        <tool name=\"web_search\" description=\"Performs a web search to find relevant information.\">\n            <parameters>\n                <parameter name=\"query\" type=\"string\" description=\"The search query.\" required=\"true\"/>\n            </parameters>\n        </tool>\n        <tool name=\"web_scrape\" description=\"Fetches and extracts content from a given URL.\">\n            <parameters>\n                <parameter name=\"url\" type=\"string\" description=\"The URL to scrape.\" required=\"true\"/>\n            </parameters>\n        </tool>\n\n        <instructions>\n            - **Prioritize internal knowledge:** Use your knowledge base first if sufficient.\n            - **Strategic search:** If internal knowledge is insufficient or outdated, use `web_search` to find relevant URLs and relevant information to answer the query.\n            - **Scraping:** If you perform a web search that cannot answer the question in detail, then you may decide to use the `web_scrape` tool on distinct and relevant URLs to inform your final answer. Select URLs that are most likely to contain the specific information needed to address the user's query comprehensively.\n            - **Avoid social media:** Do not attempt to scrape social media websites (e.g., LinkedIn, Reddit, YouTube, Facebook, Twitter/X, Instagram). These sites often have restrictions that will cause the `web_scrape` tool to fail.\n            - **Iterative tool use:** You may use `web_search` and `web_scrape` multiple times as needed to gather all necessary information.\n        </instructions>\n    </tool_usage>\n\n    <reasoning_approach>\n        <methodology>ReACT (Reasoning and Acting)</methodology>\n        <instructions>\n            For every step in solving the problem, strictly adhere to the following cycle:\n            <cycle_step>\n                <label>Thought</label>\n                <description>Reason step-by-step about the current situation, analyze previous observations, and determine the precise next action required to progress towards the solution. Articulate your rationale clearly.</description>\n            </cycle_step>\n            <cycle_step>\n                <label>Action</label>\n                <description>Execute the specific tool call or internal operation. Format as: `[tool_name]([parameter_name]=[parameter_value]`</description>\n            </cycle_step>\n            <cycle_step>\n                <label>Observation</label>\n                <description>Present a summary result of the executed action. Do not output the raw content that was scraped, just a summary</description>\n            </cycle_step>\n            Continue this `Thought` -> `Action` -> `Observation` cycle until the problem is fully solved and you have sufficient information to formulate a complete final answer.\n        </instructions>\n    </reasoning_approach>\n\n    <output_format>\n        <section name=\"Thinking Process\">\n            <description>This section must contain the complete Thought/Action/Observation cycle that led to your final answer. This is crucial for debugging and transparency.</description>\n            <example>\n                Thought: I need to find the current weather in London. I will start by searching for a reliable weather website.\n                Action: web_search(query=\"current weather London\")\n                Observation: [Search results including URLs like \"bbc.co.uk/weather\", \"accuweather.com\"]\n                Thought: The BBC weather site seems reliable. I will scrape its content to get the details.\n                Action: web_scrape(url=\"https://www.bbc.co.uk/weather/london\")\n                Observation: I found weather content here\n                Thought: I have the weather information from one source. I will scrape another to confirm and get more details.\n                Action: web_scrape(url=\"https://www.accuweather.com/london\")\n                Observation: I have found additional content\n                Thought: I have gathered sufficient information from two sources. I can now formulate the final answer.\n            </example>\n        </section>\n        <section name=\"Final Answer\">\n            <description>Provide the concise, direct answer to the user's query. Do not include any preambles, conversational greetings, or concluding remarks in this section. It should be the pure answer.</description>\n        </section>\n    </output_format>\n\n    <constraints>\n        - Do not add any superfluous preamble or conversational filler to your `Final Answer`.\n        - Ensure the `Thinking Process` section is always included and complete.\n        - Adhere strictly to the `Thought/Action/Observation` format.\n    </constraints>",
+          "maxIterations": 15,
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        -460
+      ],
+      "id": "57d073fc-bece-48ef-84c3-56d5f1269244",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "numberInputs": 9,
+        "rules": {
+          "rule": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "08f676ff-b96c-4d17-ae20-d33f33945d1d",
+                    "leftValue": "={{ $json.output.model }}",
+                    "rightValue": "=google/gemini-2.5-flash",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 2,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2759b839-0f82-4555-a0f7-99a0ac0e7bfb",
+                    "leftValue": "={{ $json.output.model }}",
+                    "rightValue": "google/gemini-2.5-pro",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 3,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e9466a22-7604-46fe-bfc0-97b159d3acd5",
+                    "leftValue": "={{ $json.output.model }}",
+                    "rightValue": "openai/gpt-4.1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 4,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3cdcf842-7ac8-4bbe-8433-dac1552d70da",
+                    "leftValue": "={{ $json.output.model }}",
+                    "rightValue": "openai/o3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 5,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0d865267-e6ce-445a-b826-217db07c3947",
+                    "leftValue": "={{ $json.output.model }}",
+                    "rightValue": "openai/gpt-4o",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 6,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "341488cf-0ae9-425f-b595-4b32ff6246a5",
+                    "leftValue": "={{ $json.output.model }}",
+                    "rightValue": "openai/gpt-4.1-nano",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 7,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "22cbd60f-8a89-40b1-9583-87dfb0e24103",
+                    "leftValue": "={{ $json.output.model }}",
+                    "rightValue": "anthropic/claude-4-opus",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 8,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5c7ae8eb-edbf-4b7e-ad1c-efd0b2b44d9d",
+                    "leftValue": "={{ $json.output.model }}",
+                    "rightValue": "anthropic/claude-4-sonnet",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "modelIndex": 9,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6ac6ad48-78c9-4a27-96a2-df3b38fb124a",
+                    "leftValue": "={{ $json.output.model }}",
+                    "rightValue": "anthropic/claude-3.5-haiku",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.modelSelector",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        20
+      ],
+      "id": "09bc4b63-cd21-41a7-af86-061b9f849108",
+      "name": "Model Selector"
+    },
+    {
+      "parameters": {
+        "content": "## Dynamic Model Selector for Optimal AI Responses\n\nThe **Router Agent** is a dynamic, AI-powered routing system that automatically selects the most appropriate large language model (LLM) to respond to a user's query based on the query’s content and purpose.\n\nThis workflow ensures **dynamic, optimized AI responses** by intelligently routing queries to the best-suited model.",
+        "height": 660,
+        "width": 620
+      },
+      "id": "df233371-a3de-4be7-9708-3a29d9306fe6",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -880,
+        -680
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://us-central1-northwestern-sandbox.cloudfunctions.net/tokenize-text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "paynearme_key_ghi789"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.chatInput }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1060,
+        -460
+      ],
+      "id": "fb2323dc-7284-48b4-8c88-02cce44a95fd",
+      "name": "TokenCount"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"model\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n      \"justification\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}",
+        "autoFix": true
+      },
+      "id": "c937fa4d-3ff2-4ed2-8716-10add629cd5b",
+      "name": "Structured Output Parser1",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        -520,
+        -160
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite-preview-06-17",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -820,
+        -240
+      ],
+      "id": "4ee04943-f482-4906-aba0-4b40f51fdc1e",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "flZ3VabFlV6wrHU6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<token_count>{{ $json.token_count }}</token_count>\n<user_query>{{ $('When chat message received').item.json.chatInput }}</user_query>",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a **Routing Agent**.\n\nYour primary task is to first analyze the user's query to determine its complexity and task type, and then route it to the most appropriate Large Language Model (LLM). Your goal is to balance performance, cost, and the specific strengths of each model to ensure the best possible response.\n\nThis is a two-stage process:\n\n1.  **Analysis**: You will use a Chain of Thought (CoT) process to determine the `query_complexity`, `task_type`, and formulate a `justification`.\n2.  **Model Routing**: You will use the determined variables and the provided `token_count` to select the best model.\n\n-----\n\n## Stage 1: Analysis (Internal Thought Process)\n\nBefore doing anything else, you must analyze the query. Follow this internal Chain of Thought process. The `justification` sentence you create in Step 3 is a required part of the final output. The rest of this reasoning process is for your internal use only.\n\n### **Chain of Thought: Analyze Query**\n\n**Step 1: Identify Key Intent and Entities.**\n\n  - First, identify the primary command or verb in the query (e.g., \"analyze,\" \"debug,\" \"summarize,\" \"create,\" \"list,\" \"find\").\n  - Next, identify the key subjects or entities the command applies to (e.g., \"Python script,\" \"the latest news,\" \"business plan\").\n\n**Step 2: Assess Keywords for Complexity and Task Type.**\n\n  - Scan the query for specific keywords that signal the level of effort and the nature of the task.\n      - **Look for `Task: Web Search` Indicators**: `latest news`, `current events`, `what is the stock price of`, `recent developments in`, `find information on`, `who won`, `what is the score`. If these are present, the `task_type` is `WebSearch`.\n      - **Look for `High` Complexity Indicators**: `analyze`, `debug`, `prove`, `refactor` (in an architectural context), `devise`, `create a strategy`, `architect`, `multi-threaded`, `SOLID principles`, `in-depth`, `complex`.\n      - **Look for `Moderate` Complexity Indicators**: `summarize`, `compare`, `explain`, `review`, `implement this function`, `class`.\n      - **Look for `Low` Complexity Indicators**: `list`, `define`, `what is`, `who was`, `translate`, `short`, `brief`, `fun fact`, `give me ideas for`.\n\n**Step 3: Formulate a Justification.**\n\n  - Based on the intent and keywords, create a single, concise sentence that explains your reasoning. This sentence will be the value for the `justification` key in the final output.\n      - *Example Justification 1*: \"The query asks for 'latest news,' which indicates the task type is WebSearch.\"\n      - *Example Justification 2*: \"The query uses the verb 'debug' and the expert term 'race condition,' which indicates a high level of complexity for a coding task.\"\n\n**Step 4: Assign Final Variables.**\n\n  - Based on your justification, assign the `query_complexity` (`Low`, `Moderate`, or `High`) and `task_type` (`Coding`, `Reasoning`, `Creative`, `WebSearch`, `General`).\n\n-----\n\n## Stage 2: Model Routing Logic\n\nAfter you have internally analyzed the query, proceed with the following tiered logic to select a model.\n\n### **Available Models**\n\nYou have access to the following models:\n\n1.  **openai/gpt-4.1**\n2.  **openai/o3**\n3.  **openai/gpt-4o**\n4.  **openai/gpt-4.1-nano**\n5.  **anthropic/claude-4-opus**\n6.  **anthropic/claude-4-sonnet**\n7.  **anthropic/claude-3.5-haiku**\n8.  **google/gemini-2.5-pro**\n9.  **google/gemini-2.5-flash** (Default)\n\n### **Tier 0: User Prescription Override**\n\n**This is your first and highest-priority check.**\n\n  - If the user specifies a model by name (e.g., \"using Claude Opus\"), and that model is available, you **must** select it. This rule overrides all other logic.\n\n### **Tier 1: Triage by Token Count**\n\nIf no model is prescribed, proceed.\n\n  - **If `token_count` \\> 200,000:** Route to `google/gemini-2.5-pro`\n  - **If 128,000 \\< `token_count` \\<= 200,000:** Route to `anthropic/claude-4-opus` or `anthropic/claude-4-sonnet`.\n  - **If `token_count` \\<= 128,000:** Proceed to Tier 2.\n\n### **Tier 2: Task-Specific Routing (Using `query_complexity` and `task_type`)**\n\n#### **1. Extensive Web Search and tool calling**\n\n  - If `task_type` is `WebSearch`: Route to `google/gemini-2.5-flash`.\n\n#### **2. Coding**\n\n  - If `task_type` is `Coding`:\n      - `anthropic/claude-4-opus`: Use if `query_complexity` is `High`.\n      - `anthropic/claude-4-sonnet`: Use if `query_complexity` is `Moderate`.\n      - `google/gemini-2.5-flash`: Use if `query_complexity` is `Low`.\n\n#### **3. Advanced Reasoning (Science, Math, Logic)**\n\n  - If `task_type` is `Reasoning`:\n      - `openai/o3`: Use if `query_complexity` is `High` or `Moderate`\n      - `google/gemini-2.5-pro`: Strong choice for `High` complexity, especially with multimodality.\n\n#### **4. Creative & Long-Form Writing**\n\n  - If `task_type` is `Creative`:\n      - `openai/gpt-4.1`: Use if `query_complexity` (creativity/nuance) is `High`.\n      - `google/gemini-2.5-flash` / `anthropic/claude-4-sonnet`: Use if `query_complexity` is `Moderate` or `Low`.\n\n#### **5. High-Speed & Low-Latency Tasks**\n\n  - For any task where speed is paramount and `query_complexity` is `Low`:\n      - `anthropic/claude-3.5-haiku`: Top choice for speed.\n      - `openai/gpt-4.1-nano`: Other strong options.\n\n### **Tier 3: The Default Rule**\n\n  - **Model**: `google/gemini-2.5-flash`\n  - **When to Use**:\n      - If the `task_type` is `General` and the `query_complexity` is `Low` or `Moderate`.\n      - When in doubt, and no other model presents a clear advantage, default to `gemini-2.5-flash`.\n\n-----\n\n## Output Format\n\nYour output must **always** be a valid JSON object in the following format. Do not include any explanations or additional text outside of the JSON structure.\n\n```json\n{\n  \"model\": \"selected-model-name\",\n  \"justification\": \"The single sentence justification you formulated in Step 3 of the analysis.\"\n}\n```"
+        }
+      },
+      "id": "6aedaf31-e872-492e-9c16-aeda7b5284a3",
+      "name": "Routing Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -740,
+        -460
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-preview-04-17-thinking",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        300
+      ],
+      "id": "b4df51cf-8bcc-4dfb-be7d-4b3a9a623fe6",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "flZ3VabFlV6wrHU6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        400
+      ],
+      "id": "3a8e8c7b-f077-4ce3-b5eb-561d2f5047a5",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "flZ3VabFlV6wrHU6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Scrapes content from a url and returns markdown format",
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v1/scrape",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer [API_KEY_HERE]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{$fromAI(\"url\")}}\",\n  \"formats\": [\n    \"markdown\"\n  ],\n  \"onlyMainContent\": true,\n  \"parsePDF\": true,\n  \"maxAge\": 14400000\n}",
+        "options": {
+          "batching": {
+            "batch": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        -160
+      ],
+      "id": "4fdce18b-e5ec-42ad-bfee-d8edc0abdb57",
+      "name": "Web_Scrape"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the internet to return content",
+        "method": "POST",
+        "url": "=https://api.tavily.com/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            },
+            {
+              "name": "Application",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            },
+            {
+              "name": "auto_parameters",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        600
+      ],
+      "id": "9cb455ad-7b6c-4482-bbfc-295d215ec0ef",
+      "name": "Web_Search_2"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the internet to return content",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": "Bearer [API_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "query"
+            },
+            {
+              "name": "search_depth",
+              "valueProvider": "fieldValue",
+              "value": "advanced"
+            },
+            {
+              "name": "include_answer",
+              "valueProvider": "fieldValue",
+              "value": "advanced"
+            },
+            {
+              "name": "max_results",
+              "valueProvider": "fieldValue",
+              "value": "15"
+            },
+            {
+              "name": "include_raw_content",
+              "valueProvider": "fieldValue",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        300,
+        -40
+      ],
+      "id": "621f84ba-9d64-4807-930d-4a1368f10357",
+      "name": "Web_Search"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the internet to return content",
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v1/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer fc-99efabccee814d0fb304484f39a7279c"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{$fromAI(\"query\",\"the query to search the web\")}}\",\n  \"limit\": 5,\n  \"location\": \"\",\n  \"tbs\": \"\"\n  }",
+        "options": {
+          "batching": {
+            "batch": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        220
+      ],
+      "id": "36bfd409-9212-42a5-936f-09ec517ad3c3",
+      "name": "Web Search"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -580,
+        40
+      ],
+      "id": "f0c7e691-8d32-4d84-9223-9ded2d5a2f78",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "adiWLjNgVZGRUpgr",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $(\"When chat message received\").item.json.sessionId }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        60,
+        -220
+      ],
+      "id": "60fca1d9-b18f-4214-93a8-14f8c4b626df",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        300
+      ],
+      "id": "b08eff96-b335-4ee2-b876-9a006998055a",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "adiWLjNgVZGRUpgr",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "o3-mini",
+          "mode": "list",
+          "cachedResultName": "o3-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        400
+      ],
+      "id": "87653c5e-f7b5-430f-afc8-414985dec47c",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "adiWLjNgVZGRUpgr",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -20,
+        280
+      ],
+      "id": "71ee039a-1e55-4f63-ae90-a88cf341233f",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "adiWLjNgVZGRUpgr",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        120,
+        400
+      ],
+      "id": "35ce31a1-f41f-492a-82f4-683a3494f0a1",
+      "name": "OpenAI Chat Model5",
+      "credentials": {
+        "openAiApi": {
+          "id": "adiWLjNgVZGRUpgr",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-opus-4-20250514",
+          "mode": "list",
+          "cachedResultName": "Claude Opus 4"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        280
+      ],
+      "id": "7ea0d847-cdc3-4b09-b2bc-e0035aa15e53",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "yD7a7X4b0kV9PiXh",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-20250514",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        380
+      ],
+      "id": "14b841a8-6996-4c68-81aa-217770067cce",
+      "name": "Anthropic Chat Model1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "yD7a7X4b0kV9PiXh",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-3-5-haiku-20241022",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 3.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        280
+      ],
+      "id": "96f7bc93-a02c-41cf-b3fa-9bb5deb06a54",
+      "name": "Anthropic Chat Model2",
+      "credentials": {
+        "anthropicApi": {
+          "id": "yD7a7X4b0kV9PiXh",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output.final_answer }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        420,
+        -540
+      ],
+      "id": "8f2db7b8-cf25-4b26-92b6-29aca1ae57dd",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        700,
+        0
+      ],
+      "id": "b39b4ef3-38e4-472a-bbb9-829b589b48e5",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "adiWLjNgVZGRUpgr",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"final_answer\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n      \"justification\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        700,
+        -160
+      ],
+      "id": "35f2000d-1b95-470d-a357-a7b3fa8526ef",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "content": "## Research Agent with Model Selector\n\nThis general purpose research agent takes as an input on the model to use and routes to the appropriate LLM. It has been set up with two tools: web_search and web_scrape.",
+        "height": 660,
+        "width": 860,
+        "color": 3
+      },
+      "id": "6667797e-a36e-4e91-a7cf-72e7b2dcba82",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -220,
+        -680
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Token Counter\n\nThis API counts the tokens of the users query and passes as an output to be used by the Routing Agent",
+        "height": 660,
+        "width": 260,
+        "color": 4
+      },
+      "id": "03c7c3cc-8171-41b3-b70e-384bad6f68dd",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1160,
+        -680
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model Selector": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "TokenCount",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TokenCount": {
+      "main": [
+        [
+          {
+            "node": "Routing Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Routing Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Routing Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Routing Agent": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Web_Scrape": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web_Search_2": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Web_Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Model Selector",
+            "type": "ai_languageModel",
+            "index": 8
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0f547ff9-2952-4adb-9a24-88be581b24c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "417d01568d9442a381ed5a25872e7ff95f9968a65187a65045ed8e625988b26f"
+  },
+  "id": "SsPo3xvKFm4wHUma",
+  "tags": []
+}
