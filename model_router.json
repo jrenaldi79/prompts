@@ -558,7 +558,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer fc-99efabccee814d0fb304484f39a7279c"
+              "value": "Bearer [API_KEY_HERE]"
             }
           ]
         },
