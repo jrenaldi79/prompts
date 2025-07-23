@@ -64,24 +64,39 @@ This JSON file defines an n8n workflow that demonstrates a sophisticated AI agen
 
 The workflow consists of the following key components:
 
-*   **AI Agent (Google Gemini):** An initial agent that uses a simple memory and has access to web search (Tavily) and web scraping (Firecrawl) tools. It acts as the primary interface for the user.
-*   **Expert Advisor (Google Gemini):** A specialized prompt that acts as a brutally honest, elite-level advisor. It guides the user through a structured refinement process for their ideas.
-*   **Concept Development (Anthropic Sonnet & Google Gemini):** A multi-agent, Tree of Thought (ToT) framework that uses both Anthropic's Sonnet and Google's Gemini models to evaluate a business challenge. It generates distinct solutions, explores their implications, and selects the optimal path forward.
-*   **Tools:**
-    *   **web_search (Tavily):** Searches the internet for information.
-    *   **web_fetch (Firecrawl):** Scrapes content from a given URL.
+- **AI Agent (Google Gemini):** An initial agent that uses a simple memory and has access to web search (Tavily) and web scraping (Firecrawl) tools. It acts as the primary interface for the user.
+- **Expert Advisor (Google Gemini):** A specialized prompt that acts as a brutally honest, elite-level advisor. It guides the user through a structured refinement process for their ideas.
+- **Concept Development (Anthropic Sonnet & Google Gemini):** A multi-agent, Tree of Thought (ToT) framework that uses both Anthropic's Sonnet and Google's Gemini models to evaluate a business challenge. It generates distinct solutions, explores their implications, and selects the optimal path forward.
+- **Tools:**
+  - **web_search (Tavily):** Searches the internet for information.
+  - **web_fetch (Firecrawl):** Scrapes content from a given URL.
 
 This workflow showcases how different AI models and tools can be chained together to create a powerful, multi-faceted AI assistant that can provide expert-level analysis and guidance.
 
-### 4. 🧠 model_router.json - Dynamic AI Model Router
+### 4. 🚀 agentic_system_parallelization.json - Agentic System Parallelization
+
+This JSON file defines an n8n workflow that demonstrates how to parallelize agent queries for more efficient execution. This workflow is designed to showcase a deterministic approach to building AI agents that can build queries and pass them to sub-workflows for processing.
+
+The core components of this workflow are:
+
+- **Query Builder:** An agent that refines a user's topic into five targeted, high-quality search queries.
+- **Split Out:** A node that splits the generated search queries into individual items for parallel processing.
+- **Execute Workflow:** This node executes a sub-workflow for each individual search query, allowing for parallel research by multiple sub-agents.
+- **Research Sub Agent:** Each sub-agent is a fully capable researcher that can search the web and use various search tools to gather information.
+- **Merge:** A node that combines the results from the parallel sub-agents.
+- **Editor:** An agent that refines and polishes the combined content into a cohesive article.
+
+This workflow highlights the benefits of parallelization in agentic systems, enabling faster and more efficient research by distributing tasks across multiple agents.
+
+### 5. 🧠 model_router.json - Dynamic AI Model Router
 
 This JSON file defines an n8n workflow that acts as an intelligent routing system. It was created for an AI literacy workshop for product leaders to demonstrate how to build more sophisticated and cost-effective AI agents. The workflow automatically analyzes a user's query and selects the most appropriate Large Language Model (LLM) from a pool of nine different models from OpenAI, Google, and Anthropic.
 
 The core components of this workflow are:
 
-*   **Token Counter:** A preliminary step that calculates the token count of the user's query to inform the routing logic, which is crucial for managing costs and context window limitations.
-*   **Routing Agent (Google Gemini):** This agent uses a Chain of Thought (CoT) process to analyze the query's complexity (Low, Moderate, High) and task type (e.g., Coding, Creative, Web Search). Based on this analysis, it provides a justification and selects the optimal model.
-*   **Model Selector:** This node takes the output from the Routing Agent and dynamically directs the request to the chosen LLM. This allows the system to use powerful models for complex tasks and more cost-effective models for simpler queries.
-*   **Execution Agent (ReACT Framework):** The final agent takes the user's query and the selected model and uses a Reason-Act (ReACT) framework to solve the problem. It can use external tools like web search and web scraping, showing its step-by-step reasoning process (Thought, Action, Observation) to arrive at the final answer.
+- **Token Counter:** A preliminary step that calculates the token count of the user's query to inform the routing logic, which is crucial for managing costs and context window limitations.
+- **Routing Agent (Google Gemini):** This agent uses a Chain of Thought (CoT) process to analyze the query's complexity (Low, Moderate, High) and task type (e.g., Coding, Creative, Web Search). Based on this analysis, it provides a justification and selects the optimal model.
+- **Model Selector:** This node takes the output from the Routing Agent and dynamically directs the request to the chosen LLM. This allows the system to use powerful models for complex tasks and more cost-effective models for simpler queries.
+- **Execution Agent (ReACT Framework):** The final agent takes the user's query and the selected model and uses a Reason-Act (ReACT) framework to solve the problem. It can use external tools like web search and web scraping, showing its step-by-step reasoning process (Thought, Action, Observation) to arrive at the final answer.
 
 This workflow demonstrates advanced concepts like dynamic model routing, Chain of Thought reasoning, and agentic workflows, showcasing how to build powerful, efficient, and cost-aware AI systems.
