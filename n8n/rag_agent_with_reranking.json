@@ -232,7 +232,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const rawData = $input.first().json.concatenated_document_pageContent;\n\n/**\n * Cleans and transforms the raw string data into an array of strings.\n * It splits the data by '--break--', trims whitespace from each chunk,\n * and filters out any resulting empty strings.\n */\nconst cleanedData = rawData\n  .split('--break--')\n  .map(chunk => chunk.trim())\n  .filter(chunk => chunk.length > 0);\n\n// Transform cleanedData to an array of items with {json: ...}\nreturn cleanedData.map(data => ({ json: { data } }));"
+        "jsCode": "const rawData = $input.first().json.concatenated_content;\n\n/**\n * Cleans and transforms the raw string data into an array of strings.\n * It splits the data by '--break--', trims whitespace from each chunk,\n * and filters out any resulting empty strings.\n */\nconst cleanedData = rawData\n  .split('--break--')\n  .map(chunk => chunk.trim())\n  .filter(chunk => chunk.length > 0);\n\n// Transform cleanedData to an array of items with {json: ...}\nreturn cleanedData.map(data => ({ json: { data } }));"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
