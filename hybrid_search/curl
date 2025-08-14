@@ -1,0 +1,5 @@
+curl -i --location --request POST \
+  'https://<your_project>.supabase.co/functions/v1/hybrid-search-service' \
+  --header 'Authorization: Bearer <YOUR_SUPABASE_ANON_KEY>' \
+  --header 'Content-Type: application/json' \
+  --data '{"query":"Why was my payment rejected for fraud?"}'
