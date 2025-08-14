@@ -1,0 +1,90 @@
+-- =================================================================
+-- Full SQL Script to Enable Hybrid Search on a 'documents' Table
+-- =================================================================
+
+-- This script assumes you have a table named 'documents' with at least
+-- the following columns:
+--   - id: A unique primary key (e.g., bigint)
+--   - content: The text to be searched (e.g., text)
+--   - embedding: The vector representation of the content (e.g., vector(1536))
+--
+-- It also assumes the 'pgvector' extension is enabled.
+
+-- Step 1: Enhance the 'documents' table for Full-Text Search
+-- -----------------------------------------------------------------
+-- This adds a 'fts' column of type tsvector.
+-- 'GENERATED ALWAYS AS' automatically creates the tsvector from the 'content' column.
+-- 'STORED' ensures the generated value is physically stored, which is required for indexing.
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS fts tsvector
+    GENERATED ALWAYS AS (to_tsvector('english', content)) STORED;
+
+-- Step 2: Create efficient indexes for both search types
+-- -----------------------------------------------------------------
+-- For idempotency, we drop existing indexes before creating new ones.
+
+-- Index for Full-Text Search (GIN)
+DROP INDEX IF EXISTS documents_fts_idx;
+CREATE INDEX documents_fts_idx ON documents USING gin(fts);
+
+-- Index for Semantic Search (HNSW with Cosine Distance)
+-- We chose HNSW for its high performance and accuracy.
+-- We chose Cosine Distance (vector_cosine_ops) for the most intuitive relevance scoring.
+DROP INDEX IF EXISTS documents_embedding_cosine_idx;
+CREATE INDEX documents_embedding_cosine_idx ON documents USING hnsw (embedding vector_cosine_ops);
+
+
+-- Step 3: Create the hybrid search SQL function
+-- -----------------------------------------------------------------
+-- This function combines keyword and semantic search results using Reciprocal Rank Fusion (RRF).
+CREATE OR REPLACE FUNCTION hybrid_search(
+  query_text text,
+  query_embedding vector(1536), -- Ensure this matches your embedding dimensions
+  match_count int,
+  full_text_weight float = 1,
+  semantic_weight float = 1,
+  rrf_k int = 50
+) RETURNS SETOF documents LANGUAGE sql AS $$
+WITH full_text AS (
+  SELECT
+    id,
+    row_number() OVER (
+      ORDER BY
+        ts_rank_cd(fts, websearch_to_tsquery('english', query_text)) DESC
+    ) AS rank_ix
+  FROM
+    documents
+  WHERE
+    fts @@ websearch_to_tsquery('english', query_text)
+  ORDER BY
+    rank_ix
+  LIMIT
+    LEAST(match_count, 30) * 2
+),
+semantic AS (
+  SELECT
+    id,
+    row_number() OVER (
+      -- Use Cosine Distance (<=>) and order ASC because lower score is better (more similar)
+      ORDER BY
+        embedding <=> query_embedding ASC
+    ) AS rank_ix
+  FROM
+    documents
+  ORDER BY
+    rank_ix
+  LIMIT
+    LEAST(match_count, 30) * 2
+)
+SELECT
+  d.*
+FROM
+  full_text
+  FULL OUTER JOIN semantic ON full_text.id = semantic.id
+  JOIN documents d ON COALESCE(full_text.id, semantic.id) = d.id
+ORDER BY
+  -- Reciprocal Rank Fusion (RRF) formula
+  COALESCE(1.0 / (rrf_k + full_text.rank_ix), 0.0) * full_text_weight +
+  COALESCE(1.0 / (rrf_k + semantic.rank_ix), 0.0) * semantic_weight DESC
+LIMIT
+  LEAST(match_count, 30)
+$$;
