@@ -1,0 +1,482 @@
+{
+  "name": "Zep MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "path": "9981851d-1716-4c6a-a92d-3c312a262bbc"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        -208
+      ],
+      "id": "90893133-4995-442b-adb9-ed425f1b7cd0",
+      "name": "MCP Server Trigger",
+      "webhookId": "9981851d-1716-4c6a-a92d-3c312a262bbc",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "e8BxcUSvoeKhNA0r",
+          "name": "MCP_Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Creates a new, independent knowledge graph within Zep. This is used for storing non-user-specific data, such as shared code snippets, product information, or general domain knowledge. It's ideal for implementing Dynamic Graph RAG or organizing data that multiple users need to access. \n\nIMPORTANT: Each graph should be described to the user as a 'project'. Do not reference Graphs to the user as this is a technical term. ",
+        "method": "POST",
+        "url": "https://api.getzep.com/api/v2/graph/create",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "graph_id",
+              "value": "={{ $fromAI(\"graph_id\",\"A unique identifier for the new graph. This can be any string (e.g., 'dev-team-code-snippets', 'product-catalog', 'company-policies').\",\"string\") }}"
+            },
+            {
+              "name": "name",
+              "value": "={{ $fromAI(\"name\",\"A human-readable name for the graph (e.g., 'Development Team Code Snippets', 'Product Catalog')\",\"string\") }}"
+            },
+            {
+              "name": "description",
+              "value": "={{ $fromAI(\"description\",\"A brief description of the graph's purpose or content.\",\"string\") }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -512,
+        64
+      ],
+      "id": "838697e7-87ba-4527-868c-67ebf8753146",
+      "name": "create_zep_graph",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mUlitNtf9kuRwmJW",
+          "name": "Zep Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Retrieves a paginated list of all independent knowledge graphs within Zep. This tool is useful for discovering existing graphs in the project, such as 'dev-team-code-snippets' or 'product-catalog', that are not tied to specific user IDs. \n\nIMPORTANT: Each graph should be described to the user as a 'project'. Do not reference Graphs to the user as this is a technical term. ",
+        "url": "https://api.getzep.com/api/v2/graph/list-all",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -336,
+        64
+      ],
+      "id": "66c80f59-53b5-4edd-af11-c52fa07d4561",
+      "name": "list_zep_graphs",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mUlitNtf9kuRwmJW",
+          "name": "Zep Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Adds new user-specific data and long-term memories (text, message, or JSON) to an existing Zep knowledge graph. This is used to populate graphs with content like code snippets, documentation, or structured business data that is specific to an individual user and isn't shared. This data can be recalled / retrieved by the 'search_user_memories' tool. \n\nIMPORTANT: Each graph should be described to the user as a 'project'. Do not reference Graphs to the user as this is a technical term. ",
+        "method": "POST",
+        "url": "https://api.getzep.com/api/v2/graph",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $fromAI(\"name\", \"Adds new data (text, message, or JSON) to an existing Zep knowledge graph. This is used to populate graphs with content like code snippets, documentation, or structured business data. Data can be added to either a project-wide graph (using 'graph_id') or a user-specific graph (using 'user_id')\", \"string\", \"text\") }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ $fromAI(\"data\",\"The content to add to the graph. For 'text' or 'message' types, this is the raw string content. For 'json' type, this should be a JSON string.\") }}"
+            },
+            {
+              "name": "type",
+              "value": "={{ $fromAI(\"type\",\"The type of data being added ('text', 'message', or 'json')\") }}"
+            },
+            {
+              "name": "user_id",
+              "value": "={{ $fromAI(\"user_id\",\"The ID of the existing user-specific graph to add data to. Required if 'graph_id' is not provided.\",\"string\") }}"
+            },
+            {
+              "name": "source_description",
+              "value": "={{ $fromAI(\"source_description\",\"An optional description of the data's source (e.g., 'internal documentation', 'chat transcript', 'CRM export').\") }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": true,
+              "maxRedirects": 21
+            }
+          },
+          "response": {}
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -160,
+        64
+      ],
+      "id": "ee85c45d-8134-4463-bccc-b495c22369db",
+      "name": "add_user_memories",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mUlitNtf9kuRwmJW",
+          "name": "Zep Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Adds new project-wide shared data and memories (text, message, or JSON) to an existing Zep knowledge graph. This is used to populate graphs with content like code snippets, documentation, or structured business data. This data can be recalled / retrieved by the 'search_project_memories' tool.\n\nIMPORTANT: Each graph should be described to the user as a 'project'. Do not reference Graphs to the user as this is a technical term. ",
+        "method": "POST",
+        "url": "https://api.getzep.com/api/v2/graph",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $fromAI(\"name\", \"Adds new data (text, message, or JSON) to an existing Zep knowledge graph. This is used to populate graphs with content like code snippets, documentation, or structured business data. Data can be added to either a project-wide graph (using 'graph_id') or a user-specific graph (using 'user_id')\", \"string\", \"text\") }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ $fromAI(\"data\",\"The content to add to the graph. For 'text' or 'message' types, this is the raw string content. For 'json' type, this should be a JSON string.\") }}"
+            },
+            {
+              "name": "type",
+              "value": "={{ $fromAI(\"type\",\"The type of data being added ('text', 'message', or 'json')\") }}"
+            },
+            {
+              "name": "graph_id",
+              "value": "={{ $fromAI(\"graph_id\",\"The ID of the existing project-wide graph to add data to. Required if 'user_id' is not provided.\",\"string\") }}"
+            },
+            {
+              "name": "source_description",
+              "value": "={{ $fromAI(\"source_description\",\"An optional description of the data's source (e.g., 'internal documentation', 'chat transcript', 'CRM export').\") }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": true,
+              "maxRedirects": 21
+            }
+          },
+          "response": {}
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        32,
+        64
+      ],
+      "id": "de58340a-1f7a-4c31-98e4-98f5c3ace631",
+      "name": "add_project_memories",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mUlitNtf9kuRwmJW",
+          "name": "Zep Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Searches for relevant memories within a specified Zep knowledge graph (project). This tool is used to retrieve stored information, such as code snippets, documentation, or structured data, by providing a natural language query. Results are ranked by relevance.\n\n**Returns:** An array of `edges` (extracted facts and relationships) that are semantically relevant to the query. Each `edge` object will contain:\n-   `fact`: The extracted fact or relationship.\n-   `episodes`: An array of `uuid`s of the episodes (memories/documents) from which the fact was extracted or to which it relates.\n\n**Usage Note:** To retrieve the *full content* of a memory or document referenced by a returned edge, use the `get_episode` tool with the appropriate `uuid` found within the `episodes` array of the most relevant edge(s).",
+        "method": "POST",
+        "url": "https://api.getzep.com/api/v2/graph/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $fromAI('query', 'The natural language query to search for within the graph.', 'string') }}"
+            },
+            {
+              "name": "graph_id",
+              "value": "={{ $fromAI(\"graph_id\",\"The ID of the project-wide graph to search.\",\"string\") }}"
+            },
+            {
+              "name": "limit",
+              "value": "={{ $fromAI(\"limit\",\"The maximum number of results to return (default: 5).\",\"number\",5) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -688,
+        64
+      ],
+      "id": "ac7c3170-659a-40b4-ab8d-7ba7efec2827",
+      "name": "search_project_memories",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mUlitNtf9kuRwmJW",
+          "name": "Zep Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Searches for relevant memories within a specified Zep user knowledge graph (specific to a person). This tool is used to retrieve stored information, such as code snippets, documentation, or structured data, by providing a natural language query. Results are ranked by relevance.\n\n**Returns:** An array of `edges` (extracted facts and relationships) that are semantically relevant to the query. Each `edge` object will contain:\n-   `fact`: The extracted fact or relationship.\n-   `episodes`: An array of `uuid`s of the episodes (memories/documents) from which the fact was extracted or to which it relates.\n\n**Usage Note:** To retrieve the *full content* of a memory or document referenced by a returned edge, use the `get_episode` tool with the appropriate `uuid` found within the `episodes` array of the most relevant edge(s).",
+        "method": "POST",
+        "url": "https://api.getzep.com/api/v2/graph/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $fromAI('query', 'The natural language query to search for within the graph.', 'string') }}"
+            },
+            {
+              "name": "user_id",
+              "value": "={{ $fromAI(\"user_id\",\"The ID of the user-specific graph to search.\",\"string\") }}"
+            },
+            {
+              "name": "limit",
+              "value": "={{ $fromAI(\"limit\",\"The maximum number of results to return (default: 5).\",\"number\",5) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -864,
+        64
+      ],
+      "id": "7bf9d362-04f6-419a-8ef1-5199001eeedf",
+      "name": "search_user_memories",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mUlitNtf9kuRwmJW",
+          "name": "Zep Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Creates a new user profile in Zep. This tool has two modes of operation:\n\n1.  **Direct Execution:** If `first_name`, `last_name`, and `email` are provided, the user is created directly.\n2.  **Interactive Onboarding Protocol:** If this tool is called WITHOUT parameters, you MUST initiate and follow the conversational protocol defined below. This is a strict, multi-step process for onboarding a new user.\n\n**INTERACTIVE ONBOARDING PROTOCOL:**\n**Step 1: Ask for Permission:**\n- Your first message MUST be: \"**Welcome! To enable long-term memory, I need to create a user profile for you.** This is a one-time setup that requires your name and email to generate a unique ID. May I proceed?\"\n\n**Step 2: Gather Details (Two-Part Conversation):**\n- After the user agrees, your next message MUST be: \"Great! What is the full name I should use for your profile?\"\n\n- After they respond with their name, your next message MUST be: \n\"Thank you. And what is your email address?\"\n\n**Step 3: Execute Tool Call (with collected data):**\n- Once you have both the name and email, you will re-call this `create_user` tool, but this time, you will populate the `first_name`, `last_name`, and `email` parameters with the exact information the user provided.\n\n**Step 4: Perform Silent Backup:**\n- After the tool call succeeds and returns a `user_id`, you must immediately and silently perform the secure backup protocol (discover home dir, create dir, write file). Do not send any messages to the user during this backup process.\n\n**Step 5: Announce and Guide:**\n- After the backup is complete, your final response MUST be this message and nothing else: \"**Setup Complete! Here's what just happened:**\n1.  **Profile Created:** I used the name and email you provided to create a new user profile in Zep.\n2.  **ID Generated:** Zep assigned you a unique User ID.\n3.  **ID Backed Up:** I saved a secure backup of this ID to `~/zep-user-memory-key/user_id.json`. This is a crucial step for resilience—it ensures we can recover your session if my prompt is ever reset.\n\n**Your new User ID is:**\n`[new_user_id_from_tool_result]`\n\n**Final Step:** To complete the setup, please copy this ID and paste it into my system prompt inside the `<user_id>` tag. On our next session, I'll be able to load your memory instantly.",
+        "method": "POST",
+        "url": "https://api.getzep.com/api/v2/users",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "user_id",
+              "value": "={{ \n  new Date().toISOString().replace(/[-:.TZ]/g, '') + \n  '-' + \n  Math.random().toString(36).substring(2, 10) + \n  '-' + \n  Date.now().toString(36) \n}}"
+            },
+            {
+              "name": "first_name",
+              "value": "={{ $fromAI(\"first_name\",\"The first name of the user.\",\"string\") }}"
+            },
+            {
+              "name": "last_name",
+              "value": "={{ $fromAI(\"last_name\",\"The last name of the user.\",\"string\") }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ $fromAI(\"email\",\"The email address of the user.\",\"string\") }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -1024,
+        64
+      ],
+      "id": "16f0fbbc-79c9-4329-bf9d-2922459f7526",
+      "name": "create_user",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mUlitNtf9kuRwmJW",
+          "name": "Zep Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Retrieves a specific episode from a Zep knowledge graph by its unique ID. This can retrieve the content that was saved vs just the facts.",
+        "url": "=https://api.getzep.com/api/v2/graph/episodes/{{ $fromAI(\"uuid\",\"the uuid of the episode\",\"string\") }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        192,
+        64
+      ],
+      "id": "d1830d52-09b8-4e09-a3e3-717e8dc103a9",
+      "name": "get_episode",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mUlitNtf9kuRwmJW",
+          "name": "Zep Authorization"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "create_zep_graph": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "list_zep_graphs": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add_user_memories": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add_project_memories": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search_project_memories": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search_user_memories": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_user": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_episode": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e6577018-b53f-4f51-8763-adb1dd41a38a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "417d01568d9442a381ed5a25872e7ff95f9968a65187a65045ed8e625988b26f"
+  },
+  "id": "2iEVJLL0bwk8MTio",
+  "tags": []
+}
