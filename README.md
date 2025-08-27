@@ -2,7 +2,15 @@
 
 This repository contains a collection of advanced AI prompts and n8n workflows designed for various tasks, from agentic systems and customer research to automated analysis and content generation.
 
-## 📂 `n8n` Directory
+## 🔧 `hybrid_search` Directory
+
+This directory contains the components for a hybrid search system implemented using Supabase and PostgreSQL with the `pgvector` extension. Hybrid search combines traditional keyword-based full-text search with modern semantic (vector) search to provide more accurate and relevant results.
+
+-   **`SQL_setup`**: A SQL script to configure a PostgreSQL database for hybrid search. It enhances a `documents` table with a tsvector column for full-text search, creates indexes for both full-text and vector search (using HNSW for cosine distance), and defines a SQL function `hybrid_search` that merges the results from both search methods using Reciprocal Rank Fusion (RRF).
+-   **`index.ts`**: A Supabase Edge Function written in TypeScript. This function serves as the API endpoint. It takes a user query, generates a vector embedding using the OpenAI API (`text-embedding-3-large`), and then calls the `hybrid_search` SQL function via RPC to retrieve the combined search results from the database.
+-   **`curl`**: Contains a sample cURL command for testing the `hybrid_search` edge function endpoint.
+
+## 🤖 `n8n` Directory
 
 This directory contains JSON files for n8n.io, a workflow automation tool. These workflows demonstrate complex, multi-step AI agent and data processing pipelines.
 
@@ -13,7 +21,7 @@ This directory contains JSON files for n8n.io, a workflow automation tool. These
 -   **`rag_agent_with_reranking.json`**: A workflow that implements a Retrieval-Augmented Generation (RAG) agent. It uses a vector store (Supabase) for semantic search and then a reranking model (Cohere) to refine the search results before answering a query.
 -   **`sample_agent_prompt_chain.json`**: A workflow that demonstrates chaining multiple prompts together. It starts with a research agent, then an "Expert Advisor" prompt, and finally a "Concept Development" prompt using a Tree of Thought framework.
 
-## 📂 `team_prompts` Directory
+## 🤖 `team_prompts` Directory
 
 This directory contains a variety of sophisticated prompts for different AI agent personas and specialized tasks.
 
