@@ -14,6 +14,8 @@ This directory contains the components for a hybrid search system implemented us
 
 This directory contains JSON files for n8n.io, a workflow automation tool. These workflows demonstrate complex, multi-step AI agent and data processing pipelines.
 
+-   **`Image Analysis MCP.json`**: A workflow that exposes an image analysis tool via an MCP server. It uses Google's Gemini model to analyze images from URLs and generate structured, textual descriptions of their content, suitable for a knowledge base.
+-   **`Zep MCP.json`**: A comprehensive workflow that provides tools for interacting with the Zep long-term memory service through an MCP server. It allows an AI agent to manage knowledge "projects" (graphs), add and search memories for users or projects, and handle user creation.
 -   **`agentic_system_parallelization.json`**: A workflow for an agentic system that refines search queries, conducts research, plans projects, generates content, and creates a Google Doc. It showcases parallel agent execution.
 -   **`interview_grader.json`**: A workflow designed to grade an interview transcript. It uses several documents (Laddering Technique, Interviewing Users, JTBD framework) as a knowledge base to provide detailed feedback and scoring.
 -   **`model_router.json`**: A workflow that acts as an intelligent router. It analyzes a user's query to determine its complexity and task type, then selects the most appropriate LLM from a list of Google, OpenAI, and Anthropic models to handle the request.
@@ -30,10 +32,11 @@ This directory contains a variety of sophisticated prompts for different AI agen
 -   **`arq_product_review_topic_modeling.md`**: A prompt that classifies customer feedback against *existing* lists of themes and subthemes using the ARQ process.
 -   **`business_consultant_tot_prompt.md`**: A prompt for a team of AI agents (consultants and a risk analyst) that uses a Tree of Thought (ToT) framework to evaluate a business challenge.
 -   **`elite_advisor_prompt.md`**: A prompt for an AI to act as a brutally honest, elite-level advisor to a user, focusing on exposing blind spots and driving measurable growth.
+-   **`expert_data_extractor.xml`**: A detailed prompt for an "Expert Data Extractor" AI agent. It outlines a comprehensive process for using scraping and image analysis tools to extract all content (text, images, iframes, dynamic elements) from a URL and compile it into a single Markdown document.
 -   **`interview_coach.md`**: A prompt for an AI to act as an experienced product researcher providing detailed, constructive feedback on an interview transcript based on provided rubrics.
 -   **`interview_summary.md`**: A prompt for a "Customer Interview Analysis Assistant" to analyze a transcript and produce a concise, actionable report, including an executive summary, key pains, themes, and a Jobs to Be Done (JTBD) analysis.
 -   **`memory_mcp.md`**: A system prompt for a conversational agent to use a knowledge graph to remember user details across conversations.
--   **`meta_prompt_improvement.xml`**: A prompt for a "world-class prompt engineer" AI to improve a given prompt using a process called "concept elevation".
+-   **`meta_prompt_improvement.md`**: A prompt for a "world-class prompt engineer" AI to improve a given prompt using a process called "concept elevation".
 -   **`mobile_ui_designer.md`**: A prompt for a senior front-end developer AI to generate a UI design plan and HTML file for a mobile app.
 -   **`new_product_survey_design.md`**: A prompt for an expert quantitative researcher AI to guide a student in creating effective, closed-ended survey questions to validate a new product concept.
 -   **`persona_segment_development.md`**: A prompt for an "Elite Customer Research Specialist" AI to guide a user through a process to transform business data into detailed buyer personas.
