@@ -48,7 +48,7 @@ This directory contains a variety of sophisticated prompts for different AI agen
 
 ---
 
-## New Entries (Pending)
+## New Additions
 
 -   **`context_compression_summarizer.md`**: A system prompt designed to distill long conversation histories into a concise, structured summary. It focuses on preserving the "essential context" (objectives, key decisions, current state, next steps) required to maintain conversation momentum and coherence without repeating the entire transcript.
 -   **`high-speed-pdf-parser-prompt.md`**: A highly specialized system prompt for an "High-Speed PDF Structure Parser" agent. Its core directive is to perform a *syntactic conversion* of PDF content into high-fidelity Markdown, prioritizing speed and local structural identification (e.g., heading levels based on visual cues) over complex, document-wide semantic analysis.
