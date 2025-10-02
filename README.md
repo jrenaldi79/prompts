@@ -2,7 +2,7 @@
 
 This repository contains a collection of advanced AI prompts and n8n workflows designed for various tasks, from agentic systems and customer research to automated analysis and content generation.
 
-## 🔧 `hybrid_search` Directory
+## 🔍 `hybrid_search` Directory
 
 This directory contains the components for a hybrid search system implemented using Supabase and PostgreSQL with the `pgvector` extension. Hybrid search combines traditional keyword-based full-text search with modern semantic (vector) search to provide more accurate and relevant results.
 
@@ -10,12 +10,12 @@ This directory contains the components for a hybrid search system implemented us
 -   **`index.ts`**: A Supabase Edge Function written in TypeScript. This function serves as the API endpoint. It takes a user query, generates a vector embedding using the OpenAI API (`text-embedding-3-large`), and then calls the `hybrid_search` SQL function via RPC to retrieve the combined search results from the database.
 -   **`curl`**: Contains a sample cURL command for testing the `hybrid_search` edge function endpoint.
 
-## 🤖 `n8n` Directory
+## 🛠️ `n8n` Directory
 
 This directory contains JSON files for n8n.io, a workflow automation tool. These workflows demonstrate complex, multi-step AI agent and data processing pipelines.
 
 -   **`Image Analysis MCP.json`**: A workflow that exposes an image analysis tool via an MCP server. It uses Google's Gemini model to analyze images from URLs and generate structured, textual descriptions of their content, suitable for a knowledge base.
--   **`Zep MCP.json`**: A comprehensive workflow that provides tools for interacting with the Zep long-term memory service through an MCP server. It allows an AI agent to manage knowledge "projects" (graphs), add and search memories for users or projects, and handle user creation.
+-   **`Zep MCP.json`**: A comprehensive workflow that provides tools for interacting with the Zep long-term memory service through an MCP server. It allows an AI agent to manage knowledge base "projects" (graphs), add and search memories for users or projects, and handle user creation.
 -   **`agentic_system_parallelization.json`**: A workflow for an agentic system that refines search queries, conducts research, plans projects, generates content, and creates a Google Doc. It showcases parallel agent execution.
 -   **`interview_grader.json`**: A workflow designed to grade an interview transcript. It uses several documents (Laddering Technique, Interviewing Users, JTBD framework) as a knowledge base to provide detailed feedback and scoring.
 -   **`model_router.json`**: A workflow that acts as an intelligent router. It analyzes a user's query to determine its complexity and task type, then selects the most appropriate LLM from a list of Google, OpenAI, and Anthropic models to handle the request.
@@ -23,7 +23,7 @@ This directory contains JSON files for n8n.io, a workflow automation tool. These
 -   **`rag_agent_with_reranking.json`**: A workflow that implements a Retrieval-Augmented Generation (RAG) agent. It uses a vector store (Supabase) for semantic search and then a reranking model (Cohere) to refine the search results before answering a query.
 -   **`sample_agent_prompt_chain.json`**: A workflow that demonstrates chaining multiple prompts together. It starts with a research agent, then an "Expert Advisor" prompt, and finally a "Concept Development" prompt using a Tree of Thought framework.
 
-## 🤖 `team_prompts` Directory
+## 💡 `team_prompts` Directory
 
 This directory contains a variety of sophisticated prompts for different AI agent personas and specialized tasks.
 
@@ -36,8 +36,8 @@ This directory contains a variety of sophisticated prompts for different AI agen
 -   **`interview_coach.md`**: A prompt for an AI to act as an experienced product researcher providing detailed, constructive feedback on an interview transcript based on provided rubrics.
 -   **`interview_summary.md`**: A prompt for a "Customer Interview Analysis Assistant" to analyze a transcript and produce a concise, actionable report, including an executive summary, key pains, themes, and a Jobs to Be Done (JTBD) analysis.
 -   **`memory_mcp.md`**: A system prompt for a conversational agent to use a knowledge graph to remember user details across conversations.
--   **`meta_prompt_improvement.md`**: A prompt for a "world-class prompt engineer" AI to improve a given prompt using a process called "concept elevation".
--   **`mobile_ui_designer.md`**: A prompt for a senior front-end developer AI to generate a UI design plan and HTML file for a mobile app.
+-   **`meta_prompt_improvement.md`**: A prompt for a "world-class prompt engineer" AI to improve a given prompt using a process called "concept elevation."
+-   **`mobile_ui_design_designer.md`**: A prompt for a senior front-end developer AI to generate a UI design plan and HTML file for a mobile app.
 -   **`new_product_survey_design.md`**: A prompt for an expert quantitative researcher AI to guide a student in creating effective, closed-ended survey questions to validate a new product concept.
 -   **`persona_segment_development.md`**: A prompt for an "Elite Customer Research Specialist" AI to guide a user through a process to transform business data into detailed buyer personas.
 -   **`product_requirements_documentation_prompt.md`**: A prompt for a senior product manager AI to guide a user through a conversation to create a comprehensive Product Requirements Document (PRD).
@@ -45,3 +45,15 @@ This directory contains a variety of sophisticated prompts for different AI agen
 -   **`rubric.md`**: A detailed rubric for evaluating a user interview across several categories like Establishing Rapport, Uncovering Needs, and Active Listening.
 -   **`tot_expert_debate_facilitator_prompt.md`**: A prompt for an AI to facilitate a debate between simulated renowned experts using a Tree of Thought (ToT) framework to solve a complex problem.
 -   **`tot_market_strategy_prompt.md`**: A prompt for an AI specializing in market strategy to use the Tree of Thoughts (ToT) methodology to develop a go-to-market plan.
+
+---
+
+## New Entries (Pending)
+
+-   **`context_compression_summarizer.md`**: A system prompt designed to distill long conversation histories into a concise, structured summary. It focuses on preserving the "essential context" (objectives, key decisions, current state, next steps) required to maintain conversation momentum and coherence without repeating the entire transcript.
+-   **`high-speed-pdf-parser-prompt.md`**: A highly specialized system prompt for an "High-Speed PDF Structure Parser" agent. Its core directive is to perform a *syntactic conversion* of PDF content into high-fidelity Markdown, prioritizing speed and local structural identification (e.g., heading levels based on visual cues) over complex, document-wide semantic analysis.
+-   **`html_to_markdown_agent.md`**: A detailed system prompt for an "Expert Data Extractor" AI agent. It guides the agent to use a two-tool process (`firecrawl.scrape` and `analyze_image`) to extract and convert comprehensive web content (static, dynamic, iframes, images) from a given URL into a single, highly structured, high-fidelity Markdown document, strictly adhering to non-interpretive content preservation.
+-   **`mobile_ui_prototype_html.md`**: A prompt for a "Senior Front-End Developer" AI agent tasked with generating a modern mobile UI design plan and a corresponding HTML prototype (2 pages). It specifies detailed design principles (minimalism, color gradients, 8px grid), technical specifications (375x812px viewport, Tailwind CSS, icon libraries), and sophisticated CSS animation requirements for micro-interactions and smooth transitions.
+-   **`modern_mobile_prototype_html.md`**: A specialized prompt for a "Senior Front-End Developer" AI agent to create a premium, three-page mobile UI prototype using the *Glassmorphism* aesthetic. It specifies advanced styling techniques, multi-layered shadows for depth, generous border radii, dynamic gradients, and sophisticated motion specifications for fluid transitions.
+-   **`saas_uiux_designer.md`**: A comprehensive system prompt for a "Senior SaaS UI/UX Designer" AI agent. It instructs the agent to transform a Product Requirements Document (PRD) into a detailed UI/UX Specification Document, including a foundational design system (color, typography, spacing), a Mermaid user flow diagram, and screen-by-screen component breakdowns for initial screens like Login and Dashboard.
+-   **`vib_desktop_html.md`**: A specialized prompt for a "Senior Front-End Developer" AI to create a high-fidelity desktop application UI prototype (2 pages). It mandates a premium *Glassmorphism* design aesthetic, multi-column layouts, large spacing multiples (e.g., 24px, 32px), and advanced CSS animations tailored for a professional desktop experience.
