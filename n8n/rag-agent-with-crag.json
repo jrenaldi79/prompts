@@ -1,0 +1,1634 @@
+{
+  "name": "Sample Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "toolDescription": "=Scrapes content from a url and returns markdown format. This should only be used to scrape content that isn't behind a paywall or has other types of log in credentials that are required. Sites such as linkedin.com, facebook.com, x.com and others, should be avoided at all costs.",
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v1/scrape",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_FIRECRAWL_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{$fromAI(\"url\",\"a web link\",\"string\")}}\",\n  \"formats\": [\n    \"markdown\"\n  ],\n  \"onlyMainContent\": true,\n  \"parsePDF\": true,\n  \"maxAge\": 14400000\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -2160,
+        544
+      ],
+      "id": "66b9ce8d-50f9-4214-934d-35ea0d4c2f9a",
+      "name": "web_fetch"
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {
+          "search_depth": "advanced",
+          "max_results": 20
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        -1824,
+        544
+      ],
+      "id": "fddefbc6-82f8-4db0-ba2e-68ed35c0ca97",
+      "name": "web_search",
+      "credentials": {
+        "tavilyApi": {
+          "id": "YOUR_TAVILY_CREDENTIAL_ID",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        560
+      ],
+      "id": "f9e38578-a94d-44f2-881e-9d8726ceb1d8",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GOOGLE_GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1648,
+        560
+      ],
+      "id": "6c28e87d-c3c4-4d89-bc12-d1eeb7a5aa29",
+      "name": "Postgres Chat Memory1",
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "AI Workshop (Supabase Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        768
+      ],
+      "id": "524167cd-2ddd-459a-aa47-a84d2a8a317c",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GOOGLE_GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {
+          "search_depth": "advanced",
+          "max_results": 20
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        2128,
+        768
+      ],
+      "id": "edcb19f3-62b5-409a-bf9d-f27a54acb627",
+      "name": "idea_enhancement",
+      "credentials": {
+        "tavilyApi": {
+          "id": "YOUR_TAVILY_CREDENTIAL_ID",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "0f087fda-1edd-4653-9351-c10781a33e41"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        2256,
+        272
+      ],
+      "id": "4b7b9057-5206-4af0-80bb-e90ac0879274",
+      "name": "MCP Server Trigger",
+      "webhookId": "0f087fda-1edd-4653-934d-35ea0d4c2f9a"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Call this tool to generate new product ideas",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', `The input should be a transcript or other documentation`, 'string') }}",
+        "options": {
+          "systemMessage": "=## Role\n\nYou are a team of AI agents emulating expert business consultants working for Realtor.com (3 distinct experts in their field) and a skeptical risk analyst (1 persona), operating under a **Tree of Thought (ToT)** framework. Your goal is to evaluate a given business challenge by generating multiple distinct potential solutions (branches), exploring the implications and risks of each branch and then evaluating and comparing these branches.\n\n## Scope of Ideas / Ground to our Business\n\nRealtor.com is a leading online real estate marketplace that primarily serves as a comprehensive resource for consumers looking to buy, sell, or rent properties. Operated by Move, Inc., a subsidiary of News Corp, the platform provides extensive, up-to-date property listings by sourcing data directly from multiple listing services (MLS). For the general public, the site offers a range of tools including home valuation estimates, affordability calculators, and market data, all designed to assist in making informed real estate decisions.\n\nIn addition to serving the public, Realtor.com provides a suite of solutions for real estate professionals, including agents, brokers, and lenders. Its business model generates revenue by selling advertising space, lead generation services, and referral-based programs to industry players. Through products like Connections Plus and ReadyConnect Concierge, the platform helps professionals find qualified clients, manage leads, and expand their brands. It also offers marketing and listing solutions to enhance visibility for properties and professional services.\n\nUltimately, Realtor.com positions itself as a central hub for the real estate industry, aiming to make the complex process of buying, selling, and renting homes more efficient and transparent for everyone involved. By connecting consumers with professional expertise and providing a robust toolkit of resources, the platform empowers users to navigate the various stages of their home journey with confidence. Its strong partnership with the National Association of Realtors (NAR) reinforces its standing as a trusted source for real estate information.\n\n## Purpose and Goals\n\n*   Emulate expert business consultants (with a variety of specialties) and a risk analyst using a structured Tree of Thought process.\n*   **Phase 1 (Branching):** Generate multiple distinct initial approaches to the challenge.\n*   **Phase 2 (Exploration):** Systematically explore the potential outcomes, requirements, initial Business Model Canvas impacts (Desirability, Viability, Feasibility), and risks for *each* distinct approach (following each branch). Make sure to explore pricing, channels, and go-to-market strategies.\n*   **Phase 3 (Evaluation & Pruning):** Critically evaluate and compare the explored branches, considering potential vs. risk and D/V/F.\n*   **Phase 4 (Convergence):** Arrive at a single, well-reasoned optimal solution by selecting the most promising branch or synthesizing elements from evaluated paths.\n*   **Phase 5 (Deep Dive):** Develop a detailed execution plan for the chosen optimal solution.\n\n## Process Phases & Role Execution (Tree of Thought)\n\nThe team will proceed through the following phases upon receiving the business challenge:\n\n**Phase 1: Initial Branch Generation (Generating Distinct Approaches)**\n\n*   The team will collectively generate **3 distinct, high-level potential approaches** to address the business challenge. These represent the initial \"branches\" of our thought tree.\n*   Briefly describe each of the 3 approaches.\n\n**Phase 2: Branch Exploration & Initial Analysis (Following Each Path)**\n\n*   For *each* of the **3 distinct approaches generated in Phase 1**, the team will explore its implications in detail. This phase involves applying the expertise of both Consultants and the Risk Analyst to *each* branch.\n*   For **Approach 1**:\n    *   **Consultant Exploration:** Describe key implementation steps, potential positive outcomes, and necessary resources. Provide an initial assessment of its **Desirability (to customers/market), Viability (financially), and Feasibility (operationally/technically)**.\n    *   **Risk Analyst Exploration:** Identify potential challenges, significant risks, failure points, negative outcomes, and worst-case scenarios specific to this approach. Critique its initial D/V/F assessment from a risk perspective.\n*   Repeat the above exploration process identically for **Approach 2**.\n*   Repeat the above exploration process identically for **Approach 3**.\n*   Present the exploration for each approach clearly, using headings for each approach and subheadings for Consultant/Risk Analyst insights.\n\n**Phase 3: Cross-Branch Evaluation & Selection (Pruning & Convergence)**\n\n*   The Consultant and Risk Analyst personas will engage in a structured evaluation and debate, comparing the **3 explored branches** based on the comprehensive analysis from Phase 2.\n*   **Goal:** To critically compare the potential benefits, risks, D/V/F assessment, and feasibility of each approach to identify the **single most promising path forward**. This phase represents the \"pruning\" and \"convergence\" towards the optimal solution.\n*   The evaluation should involve:\n    *   Directly comparing the D/V/F of the three approaches.\n    *   Weighing the potential positive outcomes against the identified risks for each path.\n    *   Discussing feasibility and resource requirements across the options.\n    *   Challenging assumptions made during the exploration phase.\n    *   Working collaboratively to select the single best approach, providing clear rationale based on the comparative analysis.\n*   Summarize the key points of the evaluation debate and the decision-making process that led to selecting the optimal approach.\n\n## Tools\n\nYou have access to the following tool to enhance your analysis:\n\n*   **idea_enhancement (Web Search Tool):** This tool allows you to perform web searches across various online platforms (e.g., forums like Reddit, X.com, specialized industry sites) to gather additional perspectives, identify user pain points, and find discussions related to the business challenge or proposed solutions.\n    *   **Usage:** You can call this tool in parallel and multiple times (up to a maximum of 5 calls per phase) to query different aspects or keywords.\n    *   **Input:** A clear search query (e.g., \"Realtor.com user complaints about lead generation,\" \"challenges for real estate agents with online platforms\").\n    *   **Output:** Summarized insights from relevant web search results, including common themes, user sentiments, and identified problems or solutions.\n\n## Output Format\n\nPlease structure your response clearly, using headings for each Phase (Phase 1, Phase 2, etc.). Within each phase, use subheadings or bullet points as necessary to organize the information logically. **Crucially, ensure Phase 2 clearly presents the exploration and analysis for *each* initial approach before the evaluation in Phase 3 begins.** Use persona identifiers (e.g., \"Consultant A:\", \"Risk Analyst:\") where appropriate within the exploration and evaluation phases.\n\n## Initial Instruction\n\nOkay, team. We are implementing the Tree of Thought framework for this analysis. Please confirm you understand your roles, the phased ToT process, and the availability and usage of the `idea_enhancement` Web Search Tool. Indicate readiness to receive the business challenge. Once I provide the challenge, you will immediately begin Phase 1: Initial Branch Generation."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        1904,
+        560
+      ],
+      "id": "97125144-07e8-49dc-9869-06eb8ac64a58",
+      "name": "Idea Generator"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Call this tool to simulate a panel of experts to debate a topic",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# Role|Embody the role of an 'Expert Debate' facilitator, orchestrating collaborations among simulated renowned experts to address complex problems, ideas, or proposals operating under a Tree of Thought (ToT) framework.Guide these simulated experts, possessing deep knowledge and diverse perspectives, towards innovative solutions through structured dialogue.Ensure the generation of a final output formatted in Markdown, consisting of a detailed Reasoning Process section and a comprehensive Final Answer section, with the answer being suitable for standalone understanding.# Purpose and Goals*   Orchestrate collaborations among simulated renowned experts.*   Address complex problems, ideas, or proposals through structured dialogue.*   Guide simulated experts towards innovative solutions.*   Generate a final output in Markdown with a detailed Reasoning Process and a comprehensive, standalone Final Answer.# Behaviors and Rules## Expert DynamicsChoose experts who:*   Bring deep, authentic knowledge and strong viewpoints.*   Naturally challenge and build upon each other's ideas.*   Have proven track records in similar challenges.*   Think differently but can find common ground.*   Know their domains' limitations and edge cases.## Facilitating Collaboration*   Introduce the problem clearly and concisely to the simulated panel.*   Prompt simulated experts to share their initial insights or perspectives. Clearly attribute contributions (e.g., using `Expert Name:`).*   Encourage a natural, structured dialogue where experts build upon each other's ideas. Ensure each simulated expert's distinct voice and perspective is represented, again using clear attribution for each contribution.*   Facilitate constructive challenges to assumptions and probing of weak points within the simulated experts' discussions.*   Oversee the refinement of ideas through iterative drafting. Represent these drafts clearly within the reasoning section (e.g., using headings like `### Draft 1`).*   Incorporate simulated feedback and critique from the experts to guide revisions. Clearly denote feedback rounds (e.g., using headings like `### Feedback on Draft 1`).*   Manage the iterative process of simulated expert contributions and revisions until a robust solution emerges.## Natural CollaborationExperts will:*   Speak in their authentic voices and styles (the system actually calls out to them!).*   Draw from their real expertise and experiences.*   Challenge assumptions and probe weak points.*   Build upon and refine others' contributions.*   Test ideas against their domain knowledge.*   Point out potential issues and improvements.*   Refine and iterate until the solution feels complete (you may call the same expert multiple times to do this).Remember: Your role is to facilitate authentic expert collaboration, then synthesize those insights into a comprehensive, standalone answer."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        2320,
+        560
+      ],
+      "id": "d008e888-8432-42d4-8763-2d6284bcade9",
+      "name": "Debate"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1824,
+        272
+      ],
+      "id": "cd41f2cb-c1bf-4a56-9406-57a0be0ba3a6",
+      "name": "Product Co-Pilot"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2304,
+        192
+      ],
+      "id": "3ba7518a-4bfc-44b5-8fbc-ceae954444ab",
+      "name": "When chat message received",
+      "webhookId": "c3b02c33-654f-480b-91e4-7798c09acb5f"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -2800,
+        544
+      ],
+      "id": "ecb74886-1ed8-493c-9394-8eb718b992c7",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "AI Workshop (Supabase Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3280,
+        880
+      ],
+      "id": "14fc8cea-5f0a-40e2-aea4-b55fadb10836",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cohere.ai/v1/rerank",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "cohereApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"rerank-v3.5\",\n  \"query\": \"{{ $('When Executed by Another Workflow').item.json.query }}\",\n  \"documents\": {{ $json.appended_data.toJsonString() }},\n\"return_documents\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1184,
+        912
+      ],
+      "id": "e7802da8-c0fb-4b74-b5c7-44a3a7198ce2",
+      "name": "HTTP Request",
+      "credentials": {
+        "cohereApi": {
+          "id": "YOUR_COHERE_CREDENTIAL_ID",
+          "name": "CohereApi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "content",
+              "separateBy": "other",
+              "customSeparator": "--break--"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -1744,
+        912
+      ],
+      "id": "de44eee5-8fd5-4412-b745-97349120be75",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawData = $input.first().json.concatenated_content;\n\n/**\n * Cleans and transforms the raw string data into an array of strings.\n * It splits the data by '--break--', trims whitespace from each chunk,\n * and filters out any resulting empty strings.\n */\nconst cleanedData = rawData\n  .split('--break--')\n  .map(chunk => chunk.trim())\n  .filter(chunk => chunk.length > 0);\n\n// Transform cleanedData to an array of items with {json: ...}\nreturn cleanedData.map(data => ({ json: { data } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1584,
+        912
+      ],
+      "id": "25906f39-6abd-4990-9646-81ff496ab22a",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "append",
+              "field": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -1424,
+        912
+      ],
+      "id": "0b8a3b99-265f-40e6-802b-63022238ab76",
+      "name": "Summarize1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b2bf1440-d5de-4f15-a407-15a14739e199",
+              "leftValue": "={{ $json.relevance_score }}",
+              "rightValue": 0.3,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -848,
+        912
+      ],
+      "id": "53ed1c10-0636-427a-b99f-533beab8b217",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1008,
+        912
+      ],
+      "id": "c75d9bed-b580-4500-90a4-5f1ddf797617",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "mode": "load",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "prompt": "={{ $json.query }}",
+        "topK": 40,
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -3120,
+        2368
+      ],
+      "id": "6df7d6f8-6f60-40aa-9b56-2d3e4861399e",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "YOUR_SUPABASE_CREDENTIAL_ID",
+          "name": "AI Workshops"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-large",
+        "options": {
+          "dimensions": 1536
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -3120,
+        2544
+      ],
+      "id": "befe7a66-4fcb-479a-b112-f1f0ff3775ff",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Step 1 - Perform Semantic Search\nThis is a direct replacement for your tool that you originally wired up to your agent.",
+        "height": 512,
+        "width": 464,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3152,
+        2224
+      ],
+      "id": "65e02290-8ee8-4626-9c2b-f2cc5b4bab1e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Step 2 - Prepare Content for Rerank\nPrepare some data transformations that are required for the Cohere API. We need to send all of our documents in as an array.",
+        "height": 512,
+        "width": 512,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1792,
+        768
+      ],
+      "id": "456dd879-a97a-4e3b-b498-31419caac84e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Step 3 - Rerank Results and Filter\nCall the Cohere API via HTTP Node and filter out irrelevant results. Output of final node is sent back as the tool call output to the main agent. Cohere v1 API spec: https://docs.cohere.com/v1/reference/rerank",
+        "height": 512,
+        "width": 608,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        768
+      ],
+      "id": "99acc02d-1670-421a-a8c2-9cf1537b1d10",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0a877134-2903-44af-9693-067b873a419e",
+              "name": "content",
+              "value": "={{ $json.document.pageContent }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2816,
+        2368
+      ],
+      "id": "5fdb7f90-b8ef-4aba-9fa9-70137f811cb0",
+      "name": "Format Output 2"
+    },
+    {
+      "parameters": {
+        "description": "Query internal company vector database containing a corpus of documents for RAG purposes",
+        "workflowId": {
+          "__rl": true,
+          "value": "tJlDtL3p2BPMNR7k",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', `A semantic search query for our vector database`, 'string') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -2656,
+        544
+      ],
+      "id": "e93d5017-53e1-42d4-9246-47557fe7d835",
+      "name": "company-docs"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -2496,
+        544
+      ],
+      "id": "a24dbf88-6fc4-4d2e-baf4-d6b55c19894f",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -2320,
+        544
+      ],
+      "id": "d156d68d-6845-4af4-8fa9-9af550c591fd",
+      "name": "Think1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0a877134-2903-44af-9693-067b873a419e",
+              "name": "content",
+              "value": "=Document Chunk: {{ $json.content }} \nDocument URL: {{ $json.metadata.url }}\nDocument Title: {{ $json.metadata.title }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2016,
+        880
+      ],
+      "id": "6ad694de-f9c5-478c-bc4d-c682d0b4de5f",
+      "name": "Format Output"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://rvanjzekflgqzfaovnsw.supabase.co/functions/v1/hybrid-search-test",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_SUPABASE_ANON_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $json['output.new_queries'] }}"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2336,
+        880
+      ],
+      "id": "e670fb90-4517-493f-8f27-92e7810afb98",
+      "name": "Hybrid Search"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<original_query>\n{{ $json.query }}\n</original_query>",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an AI language model assistant. Your task is to generate five different versions of the given user question to retrieve relevant documents from a vector database. By generating multiple perspectives on the user question, your goal is to help the user overcome some of the limitations of the distance-based similarity search. \n\nProvide these alternative questions in JSON format."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -2912,
+        880
+      ],
+      "id": "a4fe89c8-0379-44c9-824f-4c09f202be7c",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"new_queries\": [\"query 1\", \"query 2\", \"query 3\", \"query 4\", \"query 5\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -2752,
+        1088
+      ],
+      "id": "fc3f66a1-d8c5-4948-a21e-598aa62864d4",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.new_queries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2608,
+        880
+      ],
+      "id": "e0567300-a6c8-4b32-a49b-50fd5d440b72",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -2176,
+        880
+      ],
+      "id": "c43416fd-ab74-4821-bcd7-eb4b34424f05",
+      "name": "Remove Duplicates"
+    },
+    {
+      "parameters": {
+        "content": "## Query Rewriter\nDistance-based similarity search might miss relevant documents that use synonyms or discuss related concepts. Let's generate several different versions of the user’s question, effectively searching from multiple angles.",
+        "height": 496,
+        "width": 576,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3024,
+        768
+      ],
+      "id": "ed8f24d1-0f78-4e21-99eb-b18c1a5144f9",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2928,
+        1088
+      ],
+      "id": "3cd2e3c7-a5f6-4c8e-9ba8-c884ac20ee27",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GOOGLE_GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Hybrid Search Node\nThis is going to replace your Semantic Search nodes below. Wire your trigger here and then connect the output to the **summarize** node below.",
+        "height": 496,
+        "width": 544
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2400,
+        768
+      ],
+      "id": "bf8f6948-5e0a-4058-b5ad-11325e40c507",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-preview-09-2025",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2960,
+        544
+      ],
+      "id": "509f6b91-98b6-412f-9e6a-79964999679e",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GOOGLE_GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Role\n\nYou are a highly efficient and accurate AI business analyst. Your purpose is to answer user requests by synthesizing qualitative information from internal documents with quantitative, real-time data from a transactional database.\n\n# Primary Objective\n\nFulfill user requests by planning a sequence of tool calls, executing them autonomously, and synthesizing the gathered data into a single, comprehensive, and well-formatted final answer.\n\n# Tools\n\nYou have access to the following tools:\n\n1.  **`company-docs`**: Vector search over internal documentation (e.g., performance reports, project plans). Use for \"what,\" \"why,\" and \"how\" questions about strategy, initiatives, and qualitative performance.\n2.  **`realtor-db-query`**: Executes a read-only PostgreSQL query against the live transactional database. Use for \"how many,\" \"list all,\" \"what is the average,\" and other quantitative questions.\n3.  **`web_search` & `web_scrape`**: Standard tools for gathering public information, news, and competitor data.\n\n# Core Workflow: A 3-Step Process\n\nYou must follow this internal thinking process for every query. Execute all steps autonomously and silently before providing the final answer.\n\n### Step 1: Deconstruct & Plan\n1.  **Analyze the Query:** Identify the core question and break it down into the specific pieces of information required to answer it completely.\n2.  **Determine Intent:** Classify the query as needing `company_docs` (qualitative), `realtor_db_query` (quantitative), or a **Blended** approach.\n3.  **Formulate a Plan:** Create a high-level plan of which tools you need to call. For blended queries, always plan to get quantitative data first.\n\n### Step 2: Execute the Plan & Iteratively Refine\n1.  **Quantitative First (Data-First Strategy):** If the plan requires quantitative data, begin by calling `realtor_db_query`.\n    *   **Iterative Refinement:** If answering the quantitative part requires multiple steps (e.g., first finding the top-performing platform, then finding properties related to that platform), execute the necessary `realtor_db_query` calls sequentially. Use the output of one query to inform the input for the next.\n    *   **Complete all database queries before moving on.**\n\n2.  **Qualitative Context:** After gathering all necessary quantitative facts, use the specific entities you've collected (e.g., property addresses, lead source names) to form a single, precise query to `company_docs`. This query should seek the contextual \"why\" behind the data you've found.\n\n### Step 3: Synthesize & Respond\n1.  **Review Gathered Data:** Look at all the information you've collected from your tool calls.\n2.  **Synthesize the Answer:** Combine the quantitative facts and qualitative context into a cohesive narrative or summary.\n3.  **Format the Output:** Present the final, synthesized answer to the user according to the **Output Formatting** rules below. Do not show intermediate steps, SQL queries, or raw tool outputs.\n\n# Critical Rules\n1.  **Internal Sources First:** `realtor_db_query` and `company_docs` are the single source of truth for company information. Use them exclusively for such questions.\n2.  **No Raw Data Exposure:** You MUST NOT show raw SQL queries or unformatted database results to the user. Always present data as a summarized insight or a clean, formatted table.\n3.  **Cite All Sources:** Clearly distinguish between data sources in your final response.\n4.  **Totals are Mandatory:** Any response that includes a percentage MUST also present the absolute total number (e.g., \"2,345 leads\") that was used as the denominator.\n5.  **State When Unable to Answer:** If the available tools cannot answer a query, state that clearly.\n6.  **Clarify Ambiguity:** If a query is missing critical details (like a timeframe for a data query), you must ask a single, concise clarifying question before beginning your workflow.\n\n# Output Formatting\n\n-   **For DOCS-only or EXTERNAL-only queries:**\n    -   Provide a clear, narrative answer.\n    -   Conclude with a \"Sources:\" section listing the document titles or URLs.\n\n-   **For DATA-only queries:**\n    1.  **Summary:** A one-line summary of the finding, including the scope and timeframe.\n    2.  **Key Numbers:** Present the data in a clean markdown table or as a bulleted list.\n    3.  **Provenance:** A concluding line stating the data source (e.g., \"Data source: Realtor DB for August 1-31, 2025.\").\n\n-   **For BLENDED queries (Recommended Layout):**\n    1.  **Overall Summary:** A one-line summary of the key insight.\n    2.  **Authoritative Total:** State the total number of items examined (e.g., \"Total seller leads examined: 23,875.\").\n    3.  **Data Highlights Table:** A markdown table showing the key data points from your SQL query.\n    4.  **Analysis & Recommendations:** For each key data point, provide a 1-2 sentence analysis that integrates context from `company_docs`.\n    5.  **Provenance & Confidence:** State the data source and timeframe, followed by a confidence level (High, Medium, Low) with a brief rationale.\n    6.  **Sources:** A final list of all document titles and URLs used.",
+          "maxIterations": 20,
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -2080,
+        192
+      ],
+      "id": "e21a33cf-cdf1-47aa-8895-a90b0cec6359",
+      "name": "Agentic RAG"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<user_question>\n{{ $('When Executed by Another Workflow').item.json.query }}\n</user_question>",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=As a grader, your task is to evaluate the relevance of a document retrieved in response to a user's question.\n\nDecision:\n- Assign a binary score to indicate the document's relevance.\n- Use true if the document is relevant to the question, or false if it is not.\nPlease provide your binary score to indicate the document's relevance to the user question.\n- Include the original document index so we can map which documents need to be discarded\n\n<retrieved_document>\n{{ $json.document.text }}\n</retrieved_document>\n<retrieved_index>\n{{ $json.index }}\n</retrieved_index>\n\n"
+            }
+          ]
+        },
+        "batching": {
+          "batchSize": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -432,
+        912
+      ],
+      "id": "cfaf863e-0ef3-4945-b77b-02630b53c043",
+      "name": "CRAG"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"eval\": true,\n    \"document_index\": 3\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        1120
+      ],
+      "id": "8843b9b1-fc17-42b5-9180-000dff59e61a",
+      "name": "Structured Output Parser3"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        912
+      ],
+      "id": "e7899f05-9f5a-43a0-a2c1-f9c00c98a11a",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "abe0de1d-cc93-4172-b7a2-ad5d6f857bc7",
+              "name": "internal_documents",
+              "value": "={{ $json.relevant_texts }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        1232
+      ],
+      "id": "082c6f86-2b12-4ddd-85f0-e0735f197034",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        624,
+        1104
+      ],
+      "id": "1e65c280-eafa-44be-b205-e5338cd46a58",
+      "name": "Google Gemini Chat Model4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GOOGLE_GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ $json.text }}",
+        "options": {
+          "search_depth": "advanced",
+          "max_results": 5
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavily",
+      "typeVersion": 1,
+      "position": [
+        768,
+        944
+      ],
+      "id": "79e975b2-0873-4b97-9b8e-05f7f7924492",
+      "name": "Search",
+      "credentials": {
+        "tavilyApi": {
+          "id": "YOUR_TAVILY_CREDENTIAL_ID",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=The user's original query was:\n\"{{ $('When Executed by Another Workflow').item.json.query }}\"",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Based on the information we already have, what specific information is still missing to fully answer the user's original query? Generate a precise web search query that will find only the missing information. Generate a query that would likely generate new information beyond what our internal documents already show.\n\n<prompt>\n  <identity>\n    You are a Search Query Augmentation Specialist. Your mission is to analyze a user's query and a set of internal documents to identify critical information gaps and then formulate a single, precise web search query to fill those gaps.\n  </identity>\n\n  <context>\n  \n    <internal_documents>\n{{ $json.relevant_texts.join('\\n\\n') }}\n    </internal_documents>\n  </context>\n\n  <instructions>\n    Follow these steps to generate the web search query:\n\n    1.  **Think Step-by-Step:** First, complete the `<thinking>` block. Work through each step internally to build your reasoning.\n    2.  **Generate Final Query:** Based on your reasoning, generate one final, optimized web search query.\n\n    Your final output must be only the search_query containing the query string. Do not include the `<thinking>` block in the final output or any other formatting.\n  </instructions>\n\n  <rules>\n    - The query must be targeted to find *only* the missing information.\n    - The query must be likely to yield new information not present in the internal documents.\n    - The query should be specific and avoid broad terms that would return the information we already have.\n    - Use advanced search operators (e.g., \"quotes for exact match\", `OR`, `-` to exclude) if they help increase precision.\n  </rules>\n\n  <thinking>\n    1.  **Deconstruct User's Goal:** What is the core question or objective of the user's original query?\n    2.  **Synthesize Existing Information:** What are the key facts and answers already provided by the internal documents?\n    3.  **Identify the Knowledge Gap:** What specific piece of information is missing from the documents that is essential for fully answering the user's query? State this as a clear, answerable question.\n    4.  **Formulate a Query Strategy:** Based on the knowledge gap, what keywords, phrases, and operators will create the most effective search query? Brainstorm 2-3 options and select the best one.\n  </thinking>\n\n  <output_format>\n      [Your single, final, and precise web search query goes here]\n  </output_format>\n</prompt>"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        480,
+        912
+      ],
+      "id": "192007d0-b81a-4a50-b8ba-85a92dfcabb1",
+      "name": "Web Query Generator"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This node takes the output from your Tavily search node.\nconst tavilyResponse = $json;\nconst searchResults = tavilyResponse.results || [];\n\nconst webDocuments = searchResults.map(result => {\n  // Return an object with distinct source and content fields\n  return {\n    source: result.url,\n    content: result.content\n  };\n});\n\n// The output is a clean array of objects\nreturn [{\n  json: {\n    web_documents: webDocuments\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        944
+      ],
+      "id": "f0a27128-a02f-4b16-bd63-0506c8d60cdd",
+      "name": "web_results_clean"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- Get data from the two input nodes ---\n// IMPORTANT: Replace 'Internal_Docs_Processor' and 'Web_Search_Processor'\n// with the actual names of the nodes in your n8n workflow.\n\nconst internalDocsNode = $('evaluator_decision').all();\nconst webDocsNode = $('web_results_clean').all();\n\n// --- Extract the arrays from the node outputs ---\n\n// This gets the array of text strings from your internal documents.\nconst internalTexts = internalDocsNode[0].json.relevant_texts || [];\n\n// This gets the array of {source, content} objects from the web search.\nconst webDocuments = webDocsNode[0].json.web_documents || [];\n\n// --- Format the internal documents into a structured array ---\nconst formattedInternalDocs = internalTexts.map((text, index) => {\n  return {\n    source: `Internal Document ${index + 1}`,\n    content: text\n  };\n});\n\n// --- Return the final merged JSON object ---\nreturn [{\n  json: {\n    internal_documents: formattedInternalDocs,\n    web_documents: webDocuments\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        944
+      ],
+      "id": "b20c489b-c7c3-4103-ac9d-22733760c71b",
+      "name": "merged_results"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- Step 1: Get data from the two input nodes ---\n// IMPORTANT: Replace 'Reranker Output' and 'Evaluator Output' with the actual names\n// of the nodes in your n8n workflow that provide these inputs.\n\nconst rerankerResults = $('Filter').all();\nconst evaluatorResults = $('Aggregate1').all();\n\n// --- Step 2: Prepare the data for easy lookup ---\n\n// The evaluator output is nested, so we extract the core array of evaluations.\nconst evaluations = evaluatorResults[0].json.data;\n\n// Create a Map for quick access to reranked documents by their index.\n// This is more efficient than searching the array in every loop.\nconst rerankedDocsMap = new Map();\nfor (const item of rerankerResults) {\n  rerankedDocsMap.set(item.json.index, item.json.document.text);\n}\n\n// --- Step 3: Process the evaluations ---\n\nlet webSearchNeeded = false;\nconst relevantTexts = [];\n\n// Loop through each evaluation result.\nfor (const evalItem of evaluations) {\n  const isRelevant = evalItem.output.eval;\n  const docIndex = evalItem.output.document_index;\n\n  if (isRelevant) {\n    // If the doc is relevant ('true'), find its text in our Map and add it.\n    if (rerankedDocsMap.has(docIndex)) {\n      relevantTexts.push(rerankedDocsMap.get(docIndex));\n    }\n  } else {\n    // If any doc is not relevant ('false'), we signal that a web search is needed.\n    webSearchNeeded = true;\n  }\n}\n\n// --- Step 4: Return the final output ---\n\n// Return the final object. The relevant texts are now in a JSON array.\nreturn [{\n  json: {\n    webSearchNeeded: webSearchNeeded,\n    relevant_texts: relevantTexts\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        16,
+        912
+      ],
+      "id": "e339afb8-4fb1-4639-8ae5-c7e15e666db9",
+      "name": "evaluator_decision"
+    },
+    {
+      "parameters": {
+        "content": "## CRAG - Evaluate and Filter (PROACTIVE QA BLOCK)\nThis initial step assesses the quality of documents retrieved from the internal knowledge base. Each retrieved document chunk is individually graded against the original user query, often by an LLM assigning a simple 'yes' or 'no' score for relevance. The primary goal is to filter out any \"clearly irrelevant retrievals\". ",
+        "height": 512,
+        "width": 880,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        768
+      ],
+      "id": "0d4404a4-7033-434e-94f0-66400cb442f7",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## CRAG - Augment and Merge\nThis step runs only if the evaluation in Step 1 found an irrelevant document. To fill the knowledge gap, the original user query is first refined by an LLM to be more effective for a broad web search. The system then uses this transformed query to fetch supplementary information from an external source, like the Tavily API. Finally, this new information from the web is merged with the filtered, relevant documents from Step 1, creating a single, enriched context that combines the best of both internal and external knowledge.",
+        "height": 640,
+        "width": 992,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        336,
+        768
+      ],
+      "id": "b1dadf95-121c-4224-a8c9-dc176d71e382",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        1120
+      ],
+      "id": "bfbd86d0-67f4-46f3-ab97-a5b17b275410",
+      "name": "Google Gemini Chat Model5",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GOOGLE_GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ffc99abe-fe99-4a6a-a995-78598c1139e0",
+              "leftValue": "={{ $json.webSearchNeeded }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        912
+      ],
+      "id": "96c57753-875e-453a-b10d-bdd273db823f",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=**Description:**\nExecutes a read-only PostgreSQL query against the live transactional database containing property listings and lead generation events. Use this tool to get specific, real-time, and granular data that complements the aggregated metrics found in the static performance reports.\n\n**When to Use This Tool:**\n*   When the user asks for specific numbers, counts, or lists (e.g., \"How many...\", \"List all...\", \"What is the average...\").\n*   To get real-time data that is more current than the August 2025 report (e.g., \"Show me leads from the last 24 hours\").\n*   To validate or drill down into a finding from the performance document (e.g., \"The report mentions a drop in iOS leads; can you pull the daily lead count for iOS in August?\").\n*   To compare the performance of different segments, channels, or experiments (e.g., \"What's the revenue difference between leads from 'Paid' vs. 'CRM'?\").\n*   To retrieve detailed information about specific properties or leads.\n\n---\n\n### Database Schema and Column Semantics\n\nThis tool has access to the following two tables:\n\n**1. `realtor_properties`** - Contains details for each property listing.\n\n| Column Name | Data Type | Description |\n| :--- | :--- | :--- |\n| `property_id` | `SERIAL PRIMARY KEY` | Unique identifier for the property. |\n| `address` | `VARCHAR(255)` | Full street address of the property. |\n| `city` | `VARCHAR(100)` | The city where the property is located. |\n| `state` | `VARCHAR(2)` | The 2-letter state abbreviation (e.g., 'TX', 'CA'). |\n| `zip_code` | `VARCHAR(10)` | The property's ZIP code. |\n| `price` | `DECIMAL(12, 2)` | The listing price of the property. |\n| `beds` | `INT` | Number of bedrooms. |\n| `baths` | `DECIMAL(3, 1)` | Number of bathrooms (e.g., 2.5). |\n| `sqft` | `INT` | The square footage of the property. |\n| `property_type` | `VARCHAR(50)` | Type of property. **Examples:** 'Single Family', 'Condo', 'Townhome'. |\n| `listing_date` | `DATE` | The date the property was first listed. |\n| `status` | `VARCHAR(20)` | Current status of the listing. **Valid values:** 'Active', 'Pending', 'Sold'. |\n| `views_last_30_days` | `INT` | Number of views in the past 30 days. Relates to \"Urgency\" initiatives. |\n| `saves_last_30_days` | `INT` | Number of saves in the past 30 days. Relates to \"Urgency\" initiatives. |\n\n**2. `realtor_leads`** - Contains individual lead generation events.\n\n| Column Name | Data Type | Description |\n| :--- | :--- | :--- |\n| `lead_id` | `SERIAL PRIMARY KEY` | Unique identifier for the lead event. |\n| `created_at` | `TIMESTAMP WITH TIME ZONE` | The exact timestamp when the lead was generated. **Use this for all date/time filtering.** |\n| `property_id` | `INT` | **Foreign Key** that links to `realtor_properties.property_id`. |\n| `platform` | `VARCHAR(20)` | The platform the lead came from. **Valid values:** 'iOS App', 'Android App', 'Desktop', 'Mobile Web'. |\n| `source_channel` | `VARCHAR(50)` | The marketing or product channel. **Valid values:** 'Paid', 'CRM', 'Others', 'RFP (Sell.realtor.com)', 'LDP', 'MyHome', '3ps'. |\n| `lead_type` | `VARCHAR(20)` | The type of lead. **Valid values:** 'buyer', 'seller'. |\n| `experiment_variant` | `VARCHAR(100)` | If the lead was part of a test, this field contains the experiment name. **Example:** 'Compare_My_Home_Test_Group'. Can be `NULL`. |\n| `status` | `VARCHAR(20)` | The current status of the lead in the funnel. **Valid values:** 'new', 'contacted', 'converted', 'lost'. |\n| `conversion_date` | `TIMESTAMP WITH TIME ZONE` | Timestamp of when the lead status was changed to 'converted'. Can be `NULL`. |\n| `revenue_amount` | `DECIMAL(10, 2)` | The revenue generated from a converted lead. `NULL` if not converted. The SUM of this is the EFR. |\n\n---\n\n### Usage Guidelines & Best Practices\n\n*   **Always prefix table names** with `realtor_` (e.g., `SELECT * FROM realtor_leads`).\n*   **JOINs are essential:** To get property details for leads, you must `JOIN realtor_leads ON realtor_properties.property_id = realtor_leads.property_id`.\n*   **Be precise with dates:** For queries related to \"August 2025\", use a `WHERE` clause like `WHERE created_at >= '2025-08-01' AND created_at < '2025-09-01'`.\n*   **Handle `NULL`s:** When calculating averages or sums on `revenue_amount` or `experiment_variant`, remember that many values can be `NULL`.\n*   **Use aggregations:** Most questions will require `COUNT(*)`, `SUM(revenue_amount)`, or `AVG(price)`. Always use `GROUP BY` for segmented analysis.\n\n---\n\n### Example Queries\n\n**Example 1: Simple Count**\n*User Question:* \"How many seller leads did we get from the 'MyHome' channel in August?\"\n*Generated SQL:*\n```sql\nSELECT COUNT(*)\nFROM realtor_leads\nWHERE lead_type = 'seller'\n  AND source_channel = 'MyHome'\n  AND created_at >= '2025-08-01' AND created_at < '2025-09-01';\n```\n\n**Example 2: Join and Average**\n*User Question:* \"What was the average listing price for properties that generated leads from iOS users?\"\n*Generated SQL:*\n```sql\nSELECT AVG(p.price)\nFROM realtor_properties p\nJOIN realtor_leads l ON p.property_id = l.property_id\nWHERE l.platform = 'iOS App';\n```\n\n**Example 3: Complex Analysis of an Experiment**\n*User Question:* \"The report mentioned the 'Compare My Home' test. What is the conversion rate for leads in that test group versus the control group (no experiment)?\"\n*Generated SQL:*\n```sql\nSELECT\n    CASE\n        WHEN experiment_variant = 'Compare_My_Home_Test_Group' THEN 'Test Group'\n        ELSE 'Control Group'\n    END AS lead_group,\n    COUNT(*) AS total_leads,\n    COUNT(*) FILTER (WHERE status = 'converted') AS converted_leads,\n    (COUNT(*) FILTER (WHERE status = 'converted')::decimal / COUNT(*)) * 100 AS conversion_rate_percent\nFROM realtor_leads\nWHERE lead_type = 'seller'\nGROUP BY lead_group;\n```",
+        "operation": "executeQuery",
+        "query": "{{ $fromAI(\"sql_query\",\"the SQL query to be run in SQL language\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        -1984,
+        544
+      ],
+      "id": "ac2c2116-1046-4380-85ba-9e9f64228aa8",
+      "name": "execute-realtor-db-query",
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "AI Workshop (Supabase Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Role\n\nYou are a highly efficient and accurate AI assistant specializing in information retrieval and synthesis. Your primary goal is to fulfill user requests by leveraging your tools (`web_search`, `web_scrape`, and `company_docs`) to gather precise information from multiple sources and deliver it in a clear, verified, and professional manner.\n\n# Instructions\n\n## Main Objective\n\nProcess user queries by intelligently searching, fetching, and synthesizing information from internal documentation and the public web to provide comprehensive and accurate answers. Your responses should be as detailed as possible. No need to be overly brief.\n\n## Workflow\n\n1.  **Deconstruct and Strategize:**\n    Analyze the user's request to determine the most appropriate primary information source.\n    - **Internal Query:** If the query is about internal company policies, procedures, specific project details, proprietary technical information, or employee-only knowledge, the primary tool is `company_docs`.\n    - **External Query:** If the query is about public news, competitor information, general knowledge, or external entities, the primary tool is `web_search`.\n    - **Hybrid Query:** If the query could be answered by both (e.g., \"What is the public statement on our new 'Project X' and what are its internal technical specs?\"), prioritize `company_docs` first, and plan to supplement with `web_search`.\n\n2.  **Execute Primary Tool:**\n    Based on the strategy from Step 1, execute the chosen tool.\n\n    **2a. For Internal/Hybrid Queries (Using `company_docs`):**\n    - Formulate a clear, concise query that captures the essence of the user's request.\n    - Execute the `company_docs` tool.\n\n    **2b. For External Queries (Using Web Tools):**\n    - **i. Initial Information Gathering:** Execute an initial `web_search` to get a broad overview of available online sources.\n    - **ii. Source Triage and Planning:** Carefully review the search results to identify at least 5-7 diverse, high-quality URLs. Categorize them:\n        - **Group A (Direct Scrape):** Standard content websites (news, blogs) for the `web_scrape` tool.\n        - **Group B (Indirect Search):** Sites with logins or dynamic content (e.g., linkedin.com, x.com). Use `web_search` again with the URL as the query.\n    - **iii. Parallel Content Extraction:** Execute all planned tool calls from the previous step in a single, parallel operation.\n\n3.  **Evaluate and Supplement (Especially for Hybrid Queries):**\n    Review the information gathered from your primary tool.\n    - Is the answer complete?\n    - If critical information is missing, execute the secondary tool to fill the gaps. For example, if `company_docs` provided technical specs but the user also asked about public reception, now is the time to use `web_search` to find reviews and news articles.\n\n4.  **Synthesize and Verify:**\n    Collect and consolidate all information from all tool calls.\n    - Cross-reference facts between sources to verify accuracy.\n    - **Crucially, if there is a conflict between information from `company_docs` and a public web source, treat the information from `company_docs` as the definitive source of truth.**\n    - Discard any unverified or contradictory external information.\n\n5.  **Generate Response:**\n    Compose the final response based on the synthesized and verified information, adhering to the specified `output_format`.\n\n## Rules\n\n1.  **Prioritize Internal Documents:** For any information related to the company, its products, or its internal processes, `company_docs` is the authoritative source. Its findings override conflicting information from the web.\n2.  **Cite Sources Appropriately:** When providing information, distinguish between sources. For web content, you can cite the URL. For internal information, state \"According to internal company documentation.\"\n3.  **Prioritize Factual Accuracy:** Do not provide information unless you are certain it is correct and verified.\n4.  **State When Information is Unavailable:** If information cannot be found in either the internal docs or on the web, state that clearly rather than fabricating or guessing.\n5.  **Be Specific with People Searches:** For searches involving individuals, always append identifying data (e.g., \"John Doe CEO of Acme Corp\") to your `web_search` queries.\n6.  **Clarify Ambiguity:** If significant uncertainty persists after the workflow is complete (e.g., multiple projects with the same name), politely ask the user for clarifying information.\n\n# Output Format\n\nRespond directly to the user's query. If information is requested, provide it clearly and concisely. When citing sources, use URLs for web content and state \"According to internal company documentation\" for information retrieved from the `company_docs` tool.",
+          "batching": {
+            "batchSize": 4
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -2848,
+        208
+      ],
+      "id": "0b3d6a5a-1276-4db6-a343-1bb049d93cd2",
+      "name": "Basic AI Agent"
+    },
+    {
+      "parameters": {
+        "content": "## RAG Agents",
+        "height": 608,
+        "width": 1360,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3024,
+        96
+      ],
+      "id": "b8cedc30-ddc8-4a68-a9eb-a6759abfbf04",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Sample Agent to play with\nTake the prompt chaining of advisor prompts and string together and expose from an MCP",
+        "height": 880,
+        "width": 1248
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1440,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "fe362d33-edef-49d0-a618-5acad2c0a13d",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "payment rejected for fraud reasons"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "web_fetch": {
+      "ai_tool": [
+        [
+          {
+            "node": "Basic AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agentic RAG",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "web_search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agentic RAG",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Product Co-Pilot",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Product Co-Pilot",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Idea Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Debate",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "idea_enhancement": {
+      "ai_tool": [
+        [
+          {
+            "node": "Idea Generator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Idea Generator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Co-Pilot",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debate": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Co-Pilot",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Agentic RAG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Basic AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Agentic RAG",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Summarize1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "main": [
+        [
+          {
+            "node": "Format Output 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output 2": {
+      "main": [
+        []
+      ]
+    },
+    "company-docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "Basic AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agentic RAG",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Basic AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agentic RAG",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Basic AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agentic RAG",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hybrid Search": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Hybrid Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agentic RAG",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CRAG": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "CRAG",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "evaluator_decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Web Query Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search": {
+      "main": [
+        [
+          {
+            "node": "web_results_clean",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Query Generator": {
+      "main": [
+        [
+          {
+            "node": "Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "web_results_clean": {
+      "main": [
+        [
+          {
+            "node": "merged_results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "evaluator_decision": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "CRAG",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Web Query Generator",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "execute-realtor-db-query": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agentic RAG",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic AI Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "09456844-de2b-477f-a448-3e8cf1938056",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "417d01568d9442a381ed5a25872e7ff95f9968a65187a65045ed8e625988b26f"
+  },
+  "id": "tJlDtL3p2BPMNR7k",
+  "tags": []
+}
