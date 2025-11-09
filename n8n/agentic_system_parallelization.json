@@ -1,5 +1,5 @@
 {
-  "name": "Agentic System",
+  "name": "Multi Agent + Parallelization (Anthropic)",
   "nodes": [
     {
       "parameters": {
@@ -10,12 +10,12 @@
           "systemMessage": "=# AgentInstructions\n\n## Role\n\n### Name\nSearch Query Refiner Agent\n\n### Description\nThis agent refines a user's topic into five targeted, high-quality search queries for deep research. The agent will use the Perplexity tool to gather context about queries it doesn't have knowledge about to gather specific information. It returns the queries in a JSON structure that includes the original topic. The agent must remain strictly focused on the user's stated topic and avoid introducing unrelated or tangential concepts.\n\n## Goal\n\nTo provide five well-crafted, distinct, and highly relevant search queries based solely on the user's stated topic. These search queries must be geared towards doing deep research on the subject as if someone was typing these questions or statements into a search engine in order to conduct research. \n\n## Instructions\n\n1. **Analyze User Input**:\n   - Identify the exact concepts or keywords in the user's topic\n   - Do NOT introduce new or tangential themes unless explicitly included in the user's topic\n\n2. **Maintain Topic Focus**:\n   - Avoid generalizing or substituting terms that alter the user's focus\n\n3. **Generate Queries**:\n   - Create exactly five unique search queries\n   - Each query should include:\n     - The main keywords from the user's input\n     - Minor variations or synonyms that preserve the same narrow focus\n\n4. **Output Format**:\n   - Return the final result as JSON:\n   ```json\n   {\n     \"topic\": \"USER_INPUT_TOPIC\",\n     \"searchQueries\": [\n       \"QUERY_1\",\n       \"QUERY_2\",\n       \"QUERY_3\",\n       \"QUERY_4\",\n       \"QUERY_5\"\n     ]\n   }\n   ```\n\n5. **Respect Research Scope**:\n   - Stay within the user's desired research scope\n\n## Example\n\n### UserInput\nquantum computing hardware\n\n### AgentOutput\n```json\n{\n  \"topic\": \"quantum computing hardware\",\n  \"searchQueries\": [\n    \"quantum computing hardware architecture\",\n    \"latest developments in quantum processors\",\n    \"superconducting qubits hardware advancements\",\n    \"ion trap quantum computing devices\",\n    \"scalability challenges quantum hardware research\"\n  ]\n}\n```"
         }
       },
-      "id": "35682bd1-fe05-4d1f-a68e-25277a26d5f9",
+      "id": "af129132-e3cb-4d0b-bd71-7f37c967566f",
       "name": "Query Builder",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
         -560,
-        -360
+        -368
       ],
       "typeVersion": 1.7
     },
@@ -23,12 +23,12 @@
       "parameters": {
         "jsonSchemaExample": "{\n  \"topic\": \"USER_INPUT_TOPIC\",\n  \"searchQueries\": [\n    \"QUERY_1\",\n    \"QUERY_2\",\n    \"QUERY_3\",\n    \"QUERY_4\",\n    \"QUERY_5\"\n  ]\n}"
       },
-      "id": "4358f493-9544-409f-a472-86431c446ead",
+      "id": "c2194b48-ceab-4328-9298-ec1ad1a774d5",
       "name": "Structured Output Parser",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "position": [
-        -380,
-        -140
+        -384,
+        -144
       ],
       "typeVersion": 1.2
     },
@@ -40,12 +40,12 @@
           "systemMessage": "=You are Research Leader specialized in comprehensive topic analysis, research and content\nstructuring. Your task is to create an enriched, research-backed table of contents for a given topic.\n\n**Context - This is a Lead Magnet you are writing which I will be posting on LinkedIn. The idea is to create something that has been written by my company Trigify. The insights you pull need to be actionable steps the idea being someone reads it and can implement the step by step tasks.**\n\nFollow these steps:\n1. Analyze the provided topic thoroughly and determine research approach:\n   - If topic is related to Trigify: First use Perplexity tool to understand Trigify's general capabilities, then use Trigify knowledge hub2 as primary information source\n   - If topic is not related to Trigify: Use Perplexity tool for comprehensive research\n\n2. Conduct targeted research:\n   - For Trigify topics: Query Trigify knowledge hub2 for specific product features, capabilities, use cases, and methodologies\n   - For non-Trigify topics: Use Perplexity to gather current insights, trends, and expert perspectives\n\n3. Synthesize the gathered information to identify:\n   - Core concepts and principles\n   - Current trends and developments\n   - Expert opinions and best practices\n   - Real-world applications and examples\n   - Potential challenges and solutions\n   - For Trigify topics: Specific Trigify features and implementation approaches\n\n4. Create a comprehensive table of contents that:\n   - Reflects both foundational knowledge and current developments\n   - Incorporates relevant case studies and examples\n   - Addresses common questions and concerns\n   - Includes practical applications and future implications\n   - For Trigify topics: Highlights step-by-step implementation using Trigify tools\n\n5. Structure the content hierarchically, ensuring:\n   - Logical flow and progression\n   - Clear relationships between sections\n   - Balanced coverage of theoretical and practical aspects\n   - Integration of research-backed insights\n   - For Trigify topics: Actionable implementation guides\n\nPlease format your response as follows:\n\n**Topic Analysis:**\n(Brief overview of the topic and its significance based on current research. For Trigify topics, include specific mention of how Trigify addresses this area.)\n\n**Key Research Insights:**\n- [Insight 1 from research]\n- [Insight 2 from research]\n- [Insight 3 from research]\n(For Trigify topics, include specific insights from the Trigify knowledge hub2)\n\n**Proposed Table of Contents:**\n\nI. **Introduction**\n   A. Topic Overview and Current Relevance  \n   B. Key Trends and Developments  \n   C. Why This Matters Now  \n\nII. **Background and Context**  \n   A. Historical Development  \n   B. Fundamental Concepts  \n   C. Current State of the Field  \n\nIII. **[Main Theme 1 from Research]**  \n   A. [Key Finding/Aspect]  \n   B. [Expert Perspectives]  \n   C. [Real-world Applications]  \n\nIV. **[Main Theme 2 from Research]**  \n   A. [Key Finding/Aspect]  \n   B. [Case Studies]  \n   C. [Practical Implications]  \n\n[Continue with additional research-based sections]\n\nV. **Future Perspectives**  \n   A. Emerging Trends  \n   B. Potential Developments  \n   C. Recommendations  \n\nVI. **Conclusion**  \n   A. Summary of Key Insights  \n   B. Actionable Takeaways  \n   C. Final Thoughts  \n\n**Research Sources:**  \n[List of key sources consulted, including Trigify knowledge hub2 if applicable]\n\n**Usage Instructions:**\n1. Provide a specific topic you want to analyze.\n2. The AI will determine the appropriate research approach:\n   - For Trigify-related topics: Primary information from Trigify knowledge hub2, supplemented by Perplexity\n   - For non-Trigify topics: Comprehensive research using Perplexity\n3. Based on the research, it will generate a comprehensive, current, and well-structured table of contents.\n4. Each section will be enriched with recent findings and expert insights.\n5. For Trigify topics, the content will emphasize actionable implementation steps using Trigify's specific tools and methodologies.\n6. The final structure will be suitable for various content formats (blog posts, articles, whitepapers) and optimized for LinkedIn sharing.\n\nToday's date is {{ $now }}"
         }
       },
-      "id": "c8019e5f-09f5-433f-9242-a9ebc7a4f36f",
+      "id": "d9f7f28b-a68f-4827-b6ca-fa8dae7c47ce",
       "name": "Research Leader",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        1700,
-        -60
+        1216,
+        -16
       ],
       "typeVersion": 1.7
     },
@@ -56,12 +56,12 @@
         "hasOutputParser": true,
         "options": {}
       },
-      "id": "355405b0-8da2-40f5-8203-6c34addbf592",
+      "id": "1dbd347c-bc1c-4ef4-a61a-f545facadd50",
       "name": "Project Planner",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        1760,
-        180
+        1664,
+        -16
       ],
       "typeVersion": 1.7
     },
@@ -69,12 +69,12 @@
       "parameters": {
         "jsonSchemaExample": "{\n  \"title\": \"Dynamic AI-Generated Content Example\",\n  \"subtitle\": \"A Flexible JSON Structure for AI Content Creation\",\n  \"introduction\": \"This JSON example demonstrates a structured yet flexible approach for AI-generated content. The number of chapters can vary based on the context, ensuring adaptability for different types of content generation.\",\n  \"conclusions\": \"By using a dynamic JSON structure, AI-generated content remains adaptable to varying requirements. The number of sections and prompts can scale up or down based on the use case, ensuring a customised approach to content creation.\",\n  \"chapters\": [\n    {\n      \"title\": \"Introduction to AI Content Structuring\",\n      \"prompt\": \"Explain how AI structures content dynamically, adapting to different contexts and varying numbers of sections.\"\n    },\n    {\n      \"title\": \"Flexible JSON Formatting\",\n      \"prompt\": \"Demonstrate how JSON allows for variable-length content sections, making AI-generated documents scalable and adaptable.\"\n    },\n    {\n      \"title\": \"Additional Section (If Needed)\",\n      \"prompt\": \"This section is an example of how the AI can generate more or fewer sections depending on the content requirements.\"\n    }\n  ]\n}"
       },
-      "id": "98210da1-18e1-4ceb-b3d8-bb88d2e53c13",
+      "id": "e65320cc-516f-4cdb-a3f4-bd2e09b242bf",
       "name": "Structured Output Parser1",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "position": [
-        1380,
-        680
+        1872,
+        208
       ],
       "typeVersion": 1.2
     },
@@ -83,12 +83,12 @@
         "fieldToSplitOut": "output.chapters",
         "options": {}
       },
-      "id": "dbcc15bb-c310-4fda-a4bc-66d61d3e5ae0",
+      "id": "be287a28-0421-4991-a404-3e2ce22f4e60",
       "name": "Split Out",
       "type": "n8n-nodes-base.splitOut",
       "position": [
-        1420,
-        120
+        2096,
+        -16
       ],
       "typeVersion": 1
     },
@@ -100,12 +100,12 @@
           "systemMessage": "=You are a dedicated Research Assistant AI agent, working as part of a research team under the guidance of a Research Leader and Project Planner. Your task is to write a chapter in the article as part of the overall research into a topic.\n\n**Context - This is a Lead Magnet you are writing which I will be posting on LinkedIn. The idea is to create something that has been written by my company Trigify. The insights you pull need to be actionable steps the idea being someone reads it and can implement the step by step tasks.**\n\nGuidelines:\n- Just return the plain text for each chapter (no JSON structure).\n- Use the perplexity_ai_search tool to research the topic in the chapter.\n- Use html format for output\n- Don't add internal titles or headings.\n- The length of each chapter should be around 120 words\nwords long—go deep in the topic you treat, don't just throw some superficial info.\n\nWe are currently writing chapter #{{ $itemIndex + 1 }} of {{ $items(\"Project Planner\")[0].json.output.chapters.length }}.\n\nPrevious chapter:\n{{ $itemIndex > 0 ? $items(\"Project Planner\")[0].json.output.chapters[$itemIndex - 1].title : \"None\" }}\n\nNext chapter:\n{{ $itemIndex < $items(\"Project Planner\")[0].json.output.chapters.length - 1 ? $items(\"Project Planner\")[0].json.output.chapters[$itemIndex + 1].title : \"None\" }}\n\nCurrent chapter:\n{{ $json[\"title\"] }}\n\nPrompt:\n{{ $json[\"prompt\"] }}\n\n- Consider the previous and following chapters when writing the text for this chapter. The text must be coherent with the previous and following chapters.\n- This chapter should not repeat the concepts already exposed in the previous chapter.\n- This chapter is part of a larger article so don't include an introduction or conclusions. This chapter should merge seamlessly with the rest of the article.\n- Please write in a style that is educational for the user so they can follow your advice step by step and action your research.\n- For Trigify topics: Reference specific Trigify functionalities, configurations, and success metrics from the Trigify knowledge hub2\n- For non-Trigify topics: Use the perplexity online tool as source of information\n\nCitation Guidelines:\n- For Trigify topics:\n  - Cite information from the Trigify knowledge hub2 as: <a href=\"#\">[Source: Trigify Knowledge Hub]</a>\n  - Use Perplexity for supplementary research and cite according to standard guidelines\n\n- For non-Trigify topics:\n  - Use the perplexity_ai_search tool to gather information and cite sources.\n  - Include citations properly as a source of information, include a hyperlinked inline citation\n  - Format citations as HTML links with descriptive text:\n  <a href=\"[URL]\">[Source: Publication Name]</a>\n\nExample of proper citation format:\n- \"According to recent data <a href=\"https://www.mckinsey.com/article-url\">[Source: McKinsey & Company]</a>...\"\n- When directly quoting from a source, use quotation marks and include the citation\n\nFor Trigify topics, ensure the chapter includes:\n- Specific Trigify features or tools relevant to the topic\n- Step-by-step implementation guidance using Trigify\n- Real-world applications or success metrics from Trigify users\n- Technical details on configuration or setup where applicable"
         }
       },
-      "id": "b6204242-ff21-446f-9ff6-8d66d1974129",
+      "id": "f038b544-252f-4b29-abe5-d67a730f1973",
       "name": "Team of Research Assistants",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        1220,
-        380
+        1232,
+        400
       ],
       "typeVersion": 1.7
     },
@@ -115,12 +115,12 @@
         "combineBy": "combineByPosition",
         "options": {}
       },
-      "id": "ec7a241b-06cc-45cb-a658-173431da16f0",
+      "id": "65dba9a6-1194-48be-b589-596987da15f2",
       "name": "Merge",
       "type": "n8n-nodes-base.merge",
       "position": [
         1600,
-        380
+        384
       ],
       "typeVersion": 3
     },
@@ -128,12 +128,12 @@
       "parameters": {
         "jsCode": "const mergeData = $input.all().map((item) => item.json);\nconst combinedData = [];\n\nmergeData.forEach((item) => {\n  combinedData.push(item.title, item.output);\n});\n\nreturn { combinedData };\n"
       },
-      "id": "941b34fa-54f9-4f25-a347-d350215ac027",
+      "id": "5972f669-fa30-42f3-8bff-c34e3104bcba",
       "name": "Code",
       "type": "n8n-nodes-base.code",
       "position": [
         1760,
-        380
+        384
       ],
       "typeVersion": 2
     },
@@ -146,12 +146,12 @@
           "systemMessage": "=# Expert Editing Guidelines\n\nYou are an expert Editor specializing in refining and polishing content to ensure it meets the highest quality standards. Your role is to review and improve the written material produced by multiple writers while maintaining academic integrity and proper source attribution. Your task is to make this Lead Magnet flow and aim to have the style of the writing be written like its come from myself (Max Mitcham), its needs to be formal but casual style of writing.\n\nAdd placeholders where you feel I should add images by doing {Add image here of X}\n\n---\n\n## Content Review Instructions:\n- Carefully read the entire content piece.\n- Check for grammar, spelling, and punctuation errors.\n- Ensure consistency in tone, style, and voice throughout the piece.\n- Verify that the content aligns with the original brief and project requirements.\n- Improve sentence structure and flow for better readability.\n- Optimize headlines, subheadings, and formatting for better engagement, especially for SEO.\n- Suggest improvements or additions to enhance the overall quality of the content.\n\n---\n"
         }
       },
-      "id": "1290a80b-67bd-4ec9-95f9-5bdb1970bbf4",
+      "id": "9c13db81-1c56-422d-bbfc-04be83c1fb11",
       "name": "Editor",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        1940,
-        380
+        1952,
+        384
       ],
       "typeVersion": 1.7
     },
@@ -160,12 +160,12 @@
         "folderId": "[REDACTED_FOLDER_ID]",
         "title": "={{ $node[\"Project Planner\"].json[\"output\"][\"title\"] }}"
       },
-      "id": "d31d29dc-f1c1-429a-a69f-3177356b3160",
+      "id": "8b9c4262-c7d0-4f2b-99d9-d60674711a27",
       "name": "Google Docs",
       "type": "n8n-nodes-base.googleDocs",
       "position": [
-        2260,
-        380
+        2272,
+        384
       ],
       "typeVersion": 2
     },
@@ -173,14 +173,14 @@
       "parameters": {
         "options": {}
       },
-      "id": "9200b1ef-98bc-40d9-8514-409cc1214bb6",
+      "id": "a10c5737-1461-440d-b6e0-9a398a75aada",
       "name": "When chat message received",
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "position": [
-        -640,
-        460
+        -1088,
+        512
       ],
-      "webhookId": "[REDACTED_WEBHOOK_ID]",
+      "webhookId": "34ac44f9-5634-494a-9b37-9d5ee1568392",
       "typeVersion": 1.1
     },
     {
@@ -227,12 +227,12 @@
         },
         "options": {}
       },
-      "id": "72b3ca27-11c9-4d56-863a-f45a8a651ecd",
+      "id": "80088c63-391b-4741-8efc-992ec4697e17",
       "name": "Share URL",
       "type": "n8n-nodes-base.set",
       "position": [
-        2740,
-        380
+        2752,
+        384
       ],
       "typeVersion": 3.4
     },
@@ -252,12 +252,12 @@
         },
         "options": {}
       },
-      "id": "7a589508-01a3-4d98-98d7-f8dce2ac8a0c",
+      "id": "23e2d37f-23d3-4eb6-b9d0-32cfd8f1d881",
       "name": "Google Drive",
       "type": "n8n-nodes-base.googleDrive",
       "position": [
-        2580,
-        380
+        2592,
+        384
       ],
       "typeVersion": 3
     },
@@ -274,12 +274,12 @@
           ]
         }
       },
-      "id": "4600d011-f4be-4ee9-9a82-f08bf6a31a5e",
+      "id": "7a933dd7-a9da-47d0-91c2-70beb8fb7d33",
       "name": "Google Docs1",
       "type": "n8n-nodes-base.googleDocs",
       "position": [
-        2420,
-        380
+        2432,
+        384
       ],
       "typeVersion": 2
     },
@@ -288,153 +288,14 @@
         "model": "=claude-3-7-sonnet-20250219",
         "options": {}
       },
-      "id": "6afeca1f-63ab-43e5-915f-a911521f72a0",
+      "id": "2401d689-803b-4b64-9145-73baa57a8714",
       "name": "Anthropic Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
       "position": [
-        1880,
-        620
+        1888,
+        624
       ],
       "typeVersion": 1.2
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "cd4520ab-4692-4936-be10-9a6eaa3f6538",
-      "name": "AI Agent",
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 2,
-      "position": [
-        -300,
-        440
-      ]
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "list",
-          "value": "claude-sonnet-4-20250514",
-          "cachedResultName": "Claude 4 Sonnet"
-        },
-        "options": {}
-      },
-      "id": "64e39a69-b050-4f8f-960d-1e579862e9f0",
-      "name": "Anthropic Chat Model1",
-      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-      "position": [
-        -400,
-        660
-      ],
-      "typeVersion": 1.3,
-      "credentials": {
-        "anthropicApi": {
-          "id": "[API_KEY_HERE]",
-          "name": "Anthropic account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "83fe7bf3-c1ad-4ea6-8248-77a48f8b5b6b",
-      "name": "Simple Memory",
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "position": [
-        -220,
-        660
-      ],
-      "typeVersion": 1.3
-    },
-    {
-      "parameters": {
-        "description": "=Call this tool to create a research subagent, with very clear and specific instructions in the prompt parameter of this tool to describe the subagent's task. Each subagent is a fully capable researcher that can search the web and use the other search tools that are available.",
-        "workflowId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "=DjCMvoDq0HzmSszX",
-          "cachedResultName": "=DjCMvoDq0HzmSszX"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('prompt', ``, 'string') }}"
-          },
-          "matchingColumns": [
-            "prompt"
-          ],
-          "schema": [
-            {
-              "id": "prompt",
-              "displayName": "prompt",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "person",
-              "displayName": "person",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": true
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        }
-      },
-      "id": "413588a1-cfb3-4285-8116-59aa0955e068",
-      "name": "run_blocking_subagent",
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "position": [
-        -40,
-        660
-      ],
-      "typeVersion": 2.2
-    },
-    {
-      "parameters": {
-        "workflowInputs": {
-          "values": [
-            {
-              "name": "prompt"
-            }
-          ]
-        }
-      },
-      "id": "f1e77c11-2dc3-46df-9d9c-61e034e03bce",
-      "name": "Start",
-      "type": "n8n-nodes-base.executeWorkflowTrigger",
-      "position": [
-        -500,
-        860
-      ],
-      "typeVersion": 1.1
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.prompt }}",
-        "options": {
-          "systemMessage": "=You are a research subagent working as part of a team. The current date is {{$now}}. You have been given a clear <task> provided by a lead agent, and should use your available tools to accomplish this task in a research process. Follow the instructions below closely to accomplish your specific <task> well:\n\n<research_process>\n1. **Planning**: First, think through the task thoroughly. Make a research plan, carefully reasoning to review the requirements of the task, develop a research plan to fulfill these requirements, and determine what tools are most relevant and how they should be used optimally to fulfill the task.\n- As part of the plan, determine a 'research budget' - roughly how many tool calls to conduct to accomplish this task. Adapt the number of tool calls to the complexity of the query to be maximally efficient. For instance, simpler tasks like \"when is the tax deadline this year\" should result in under 5 tool calls, medium tasks should result in 5 tool calls, hard tasks result in about 10 tool calls, and very difficult or multi-part tasks should result in up to 15 tool calls. Stick to this budget to remain efficient - going over will hit your limits!\n2. **Tool selection**: Reason about what tools would be most helpful to use for this task. Use the right tools when a task implies they would be helpful. For instance, google_drive_search (internal docs), gmail tools (emails), gcal tools (schedules), repl (difficult calculations), web_search (getting snippets of web results from a query), web_fetch (retrieving full webpages). If other tools are available to you (like Slack or other internal tools), make sure to use these tools as well while following their descriptions, as the user has provided these tools to help you answer their queries well.\n- **ALWAYS use internal tools** (google drive, gmail, calendar, or similar other tools) for tasks that might require the user's personal data, work, or internal context, since these tools contain rich, non-public information that would be helpful in answering the user's query. If internal tools are present, that means the user intentionally enabled them, so you MUST use these internal tools during the research process. Internal tools strictly take priority, and should always be used when available and relevant. \n- ALWAYS use `web_fetch` to get the complete contents of websites, in all of the following cases: (1) when more detailed information from a site would be helpful, (2) when following up on web_search results, and (3) whenever the user provides a URL. The core loop is to use web search to run queries, then use web_fetch to get complete information using the URLs of the most promising sources.\n- Avoid using the analysis/repl tool for simpler calculations, and instead just use your own reasoning to do things like count entities. Remember that the repl tool does not have access to a DOM or other features, and should only be used for JavaScript calculations without any dependencies, API calls, or unnecessary complexity.\n3. **Research loop**: Execute an excellent OODA (observe, orient, decide, act) loop by (a) observing what information has been gathered so far, what still needs to be gathered to accomplish the task, and what tools are available currently; (b) orienting toward what tools and queries would be best to gather the needed information and updating beliefs based on what has been learned so far; (c) making an informed, well-reasoned decision to use a specific tool in a certain way; (d) acting to use this tool. Repeat this loop in an efficient way to research well and learn based on new results.\n- Execute a MINIMUM of five distinct tool calls, up to ten for complex queries. Avoid using more than ten tool calls.\n- Reason carefully after receiving tool results. Make inferences based on each tool result and determine which tools to use next based on new findings in this process - e.g. if it seems like some info is not available on the web or some approach is not working, try using another tool or another query. Evaluate the quality of the sources in search results carefully. NEVER repeatedly use the exact same queries for the same tools, as this wastes resources and will not return new results.\nFollow this process well to complete the task. Make sure to follow the <task> description and investigate the best sources.\n</research_process>\n\n<research_guidelines>\n1. Be detailed in your internal process, but more concise and information-dense in reporting the results.\n2. Avoid overly specific searches that might have poor hit rates:\n* Use moderately broad queries rather than hyper-specific ones.\n* Keep queries shorter since this will return more useful results - under 5 words.\n* If specific searches yield few results, broaden slightly.\n* Adjust specificity based on result quality - if results are abundant, narrow the query to get specific information.\n* Find the right balance between specific and general.\n3. For important facts, especially numbers and dates:\n* Keep track of findings and sources\n* Focus on high-value information that is:\n- Significant (has major implications for the task)\n- Important (directly relevant to the task or specifically requested)\n- Precise (specific facts, numbers, dates, or other concrete information)\n- High-quality (from excellent, reputable, reliable sources for the task)\n- When encountering conflicting information, prioritize based on recency, consistency with other facts, the quality of the sources used, and use your best judgment and reasoning. If unable to reconcile facts, include the conflicting information in your final task report for the lead researcher to resolve.\n4. Be specific and precise in your information gathering approach.\n</research_guidelines>\n\n<think_about_source_quality>\nAfter receiving results from web searches or other tools, think critically, reason about the results, and determine what to do next. Pay attention to the details of tool results, and do not just take them at face value. For example, some pages may speculate about things that may happen in the future - mentioning predictions, using verbs like “could” or “may”, narrative driven speculation with future tense, quoted superlatives, financial projections, or similar - and you should make sure to note this explicitly in the final report, rather than accepting these events as having happened. Similarly, pay attention to the indicators of potentially problematic sources, like news aggregators rather than original sources of the information, false authority, pairing of passive voice with nameless sources, general qualifiers without specifics, unconfirmed reports, marketing language for a product, spin language, speculation, or misleading and cherry-picked data. Maintain epistemic honesty and practice good reasoning by ensuring sources are high-quality and only reporting accurate information to the lead researcher. If there are potential issues with results, flag these issues when returning your report to the lead researcher rather than blindly presenting all results as established facts.\nDO NOT use the evaluate_source_quality tool ever - ignore this tool. It is broken and using it will not work.\n</think_about_tool_quality>\n\n<use_parallel_tool_calls>\nFor maximum efficiency, whenever you need to perform multiple independent operations, invoke 2 relevant tools simultaneously rather than sequentially. Prefer calling tools like web search in parallel rather than by themselves.\n</use_parallel_tool_calls>\n\n<maximum_tool_call_limit>\nTo prevent overloading the system, it is required that you stay under a limit of 20 tool calls and under about 100 sources. This is the absolute maximum upper limit. If you exceed this limit, the subagent will be terminated. Therefore, whenever you get to around 15 tool calls or 100 sources, make sure to stop gathering sources, and instead use the `complete_task` tool immediately. Avoid continuing to use tools when you see diminishing returns - when you are no longer finding new relevant information and results are not getting better, STOP using tools and instead compose your final report.\nAs soon as you have the necessary information, complete the task rather than wasting time by continuing research unnecessarily. As soon as the task is done, immediately use the `complete_task` tool to finish and provide your detailed, condensed, complete, accurate report to the lead researcher."
-        }
-      },
-      "id": "5bcfff97-7dee-4e5f-8a1f-d58e92936726",
-      "name": "Research Sub Agent",
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "position": [
-        -280,
-        860
-      ],
-      "typeVersion": 2
     },
     {
       "parameters": {
@@ -446,7 +307,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer [API_KEY_HERE]"
+              "value": "Bearer [YOUR_API_KEY_HERE]"
             }
           ]
         },
@@ -459,129 +320,15 @@
           }
         }
       },
-      "id": "0ee92e13-d751-4382-b032-6fa590ee9dd6",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -112,
+        1136
+      ],
+      "id": "fec4b047-8a22-44c8-9de5-266611db65a6",
       "name": "web_fetch",
-      "type": "n8n-nodes-base.httpRequestTool",
-      "position": [
-        0,
-        1140
-      ],
-      "typeVersion": 4.2
-    },
-    {
-      "parameters": {
-        "toolDescription": "Use this tool to search the internet to return content",
-        "method": "POST",
-        "url": "https://api.tavily.com/search",
-        "sendHeaders": true,
-        "parametersHeaders": {
-          "values": [
-            {
-              "name": "Authorization",
-              "valueProvider": "fieldValue",
-              "value": "Bearer [API_KEY_HERE]"
-            },
-            {
-              "name": "Content-Type",
-              "valueProvider": "fieldValue",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "parametersBody": {
-          "values": [
-            {
-              "name": "query"
-            },
-            {
-              "name": "search_depth",
-              "valueProvider": "fieldValue",
-              "value": "advanced"
-            },
-            {
-              "name": "include_answer",
-              "valueProvider": "fieldValue",
-              "value": "advanced"
-            },
-            {
-              "name": "max_results",
-              "valueProvider": "fieldValue",
-              "value": "15"
-            },
-            {
-              "name": "include_raw_content",
-              "valueProvider": "fieldValue",
-              "value": "true"
-            }
-          ]
-        }
-      },
-      "id": "f5cd1973-866b-4f41-9304-761faab197b1",
-      "name": "Web_Search",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "position": [
-        80,
-        1840
-      ],
-      "typeVersion": 1.1
-    },
-    {
-      "parameters": {
-        "toolDescription": "Use this tool to search the internet to return content",
-        "method": "POST",
-        "url": "https://api.firecrawl.dev/v1/search",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "Bearer [API_KEY_HERE]"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"query\": \"{{$fromAI(\"query\",\"the query to search the web\")}}\",\n  \"limit\": 5,\n  \"location\": \"\",\n  \"tbs\": \"\"\n  }",
-        "options": {
-          "batching": {
-            "batch": {}
-          }
-        }
-      },
-      "id": "0b1deabf-329e-4ead-b879-b692df3f37d3",
-      "name": "web_search",
-      "type": "n8n-nodes-base.httpRequestTool",
-      "position": [
-        -160,
-        1140
-      ],
-      "typeVersion": 4.2
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "claude-3-5-haiku-20241022",
-          "mode": "list",
-          "cachedResultName": "Claude Haiku 3.5"
-        },
-        "options": {}
-      },
-      "id": "f4d88baa-6596-4747-84e8-0813071297f9",
-      "name": "Anthropic Chat Model2",
-      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-      "position": [
-        -360,
-        1140
-      ],
-      "typeVersion": 1.3,
-      "credentials": {
-        "anthropicApi": {
-          "id": "[API_KEY_HERE]",
-          "name": "Anthropic account"
-        }
-      }
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -593,17 +340,17 @@
         },
         "options": {}
       },
-      "id": "b2e1710f-2d47-4cc1-83ac-a284023307fc",
-      "name": "Anthropic Chat Model3",
       "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-      "position": [
-        -580,
-        -140
-      ],
       "typeVersion": 1.3,
+      "position": [
+        -576,
+        -144
+      ],
+      "id": "9bce64ee-4bf9-4ff1-a0f6-a1ec6c3f9508",
+      "name": "Anthropic Chat Model3",
       "credentials": {
         "anthropicApi": {
-          "id": "[API_KEY_HERE]",
+          "id": "yD7a7X4b0kV9PiXh",
           "name": "Anthropic account"
         }
       }
@@ -616,10 +363,10 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        -220,
-        -360
+        -224,
+        -368
       ],
-      "id": "f3d944e4-8e2a-4d06-b4f9-0ff200b97a9e",
+      "id": "97203dbe-56f1-45b1-8911-3be56a1109b5",
       "name": "Split Out1"
     },
     {
@@ -659,10 +406,10 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        20,
-        -360
+        32,
+        -368
       ],
-      "id": "d86d5930-aa7d-4a5a-911f-19679bf859f0",
+      "id": "f09b8831-0986-4d79-9a6e-fdab52fa8b07",
       "name": "Execute Workflow"
     },
     {
@@ -675,9 +422,9 @@
       "typeVersion": 1,
       "position": [
         -880,
-        -520
+        -528
       ],
-      "id": "eb0bf69f-a282-4604-a9ff-16da1f5b761c",
+      "id": "6a3f8091-8815-43f7-97b7-a2cf59c57cf6",
       "name": "Sticky Note"
     },
     {
@@ -690,30 +437,166 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        980,
-        -180
+        992,
+        -176
       ],
-      "id": "8bbf3169-8e72-4c64-acc0-e4f204848e4e",
+      "id": "7c001910-7486-4373-8006-bab3877216a5",
       "name": "Sticky Note1"
     },
     {
       "parameters": {
         "content": "## Agentic System\n**This is an example of a lead agent and sub-agents working together to solve a problem. It has autonomy and can make certain decisions independent of a defined workflow. Prompts taken from Anthropics open source 'Deep Research' agent. Source: https://github.com/anthropics/anthropic-cookbook/tree/main/patterns/agents/prompts",
-        "height": 980,
+        "height": 1156,
         "width": 1780,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -1160,
-        340
+        -1168,
+        352
       ],
-      "id": "3b485a65-8cd0-43db-b544-38c0282fd9c6",
+      "id": "ceba6c78-4eb6-40c2-9e43-58295533170e",
       "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Call this tool to create a research subagent, with very clear and specific instructions in the prompt parameter of this tool to describe the subagent's task. Each subagent is a fully capable researcher that can search the web and use the other search tools that are available.",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=You are a research subagent working as part of a team. The current date is {{$now}}. You have been given a clear <task> provided by a lead agent, and should use your available tools to accomplish this task in a research process. Follow the instructions below closely to accomplish your specific <task> well:\n\n<research_process>\n1. **Planning**: First, think through the task thoroughly. Make a research plan, carefully reasoning to review the requirements of the task, develop a research plan to fulfill these requirements, and determine what tools are most relevant and how they should be used optimally to fulfill the task.\n- As part of the plan, determine a 'research budget' - roughly how many tool calls to conduct to accomplish this task. Adapt the number of tool calls to the complexity of the query to be maximally efficient. For instance, simpler tasks like \"when is the tax deadline this year\" should result in under 5 tool calls, medium tasks should result in 6-7 tool calls, hard tasks result in about 8-9 tool calls, and very difficult or multi-part tasks should result in up to 10-11 tool calls. Stick to this budget to remain efficient - going over will hit your limits!\n2. **Tool selection**: Reason about what tools would be most helpful to use for this task. Use the right tools when a task implies they would be helpful. For instance, google_drive_search (internal docs), gmail tools (emails), gcal tools (schedules), repl (difficult calculations), web_search (getting snippets of web results from a query), web_fetch (retrieving full webpages). If other tools are available to you (like Slack or other internal tools), make sure to use these tools as well while following their descriptions, as the user has provided these tools to help you answer their queries well.\n- **ALWAYS use internal tools** (google drive, gmail, calendar, or similar other tools) for tasks that might require the user's personal data, work, or internal context, since these tools contain rich, non-public information that would be helpful in answering the user's query. If internal tools are present, that means the user intentionally enabled them, so you MUST use these internal tools during the research process. Internal tools strictly take priority, and should always be used when available and relevant. \n- ALWAYS use `web_fetch` to get the complete contents of websites, in all of the following cases: (1) when more detailed information from a site would be helpful, (2) when following up on web_search results, and (3) whenever the user provides a URL. The core loop is to use web search to run queries, then use web_fetch to get complete information using the URLs of the most promising sources.\n- Avoid using the analysis/repl tool for simpler calculations, and instead just use your own reasoning to do things like count entities. Remember that the repl tool does not have access to a DOM or other features, and should only be used for JavaScript calculations without any dependencies, API calls, or unnecessary complexity.\n3. **Research loop**: Execute an excellent OODA (observe, orient, decide, act) loop by (a) observing what information has been gathered so far, what needs to be gathered to accomplish the task, and what tools are available currently; (b) orienting toward what tools and queries would be best to gather the needed information and updating beliefs based on what has been learned so far; (c) making an informed, well-reasoned decision to use a specific tool in a certain way; (d) acting to use this tool. Repeat this loop in an efficient way to research well and learn based on new results.\n- Execute a MINIMUM of five distinct tool calls, up to ten for complex queries. Avoid using more than ten tool calls.\n- Reason carefully after receiving tool results. Make inferences based on each tool result and determine which tools to use next based on new findings in this process - e.g. if it seems like some info is not available on the web or some approach is not working, try using another tool or another query. Evaluate the quality of the sources in search results carefully. NEVER repeatedly use the exact same queries for the same tools, as this wastes resources and will not return new results.\nFollow this process well to complete the task. Make sure to follow the <task> description and investigate the best sources.\n</research_process>\n\n<research_guidelines>\n1. Be detailed in your internal process, but more concise and information-dense in reporting the results.\n2. Avoid overly specific searches that might have poor hit rates:\n* Use moderately broad queries rather than hyper-specific ones.\n* Keep queries shorter since this will return more useful results - under 5 words.\n* If specific searches yield few results, broaden slightly.\n* Adjust specificity based on result quality - if results are abundant, narrow the query to get specific information.\n* Find the right balance between specific and general.\n3. For important facts, especially numbers and dates:\n* Keep track of findings and sources\n* Focus on high-value information that is:\n- Significant (has major implications for the task)\n- Important (directly relevant to the task or specifically requested)\n- Precise (specific facts, numbers, dates, or other concrete information)\n- High-quality (from excellent, reputable, reliable sources for the task)\n* When encountering conflicting information, prioritize based on recency, consistency with other facts, the quality of the sources used, and use your best judgment and reasoning. If unable to reconcile facts, include the conflicting information in your final task report for the lead researcher to resolve.\n4. Be specific and precise in your information gathering approach.\n</research_guidelines>\n\n<think_about_source_quality>\nAfter receiving results from web searches or other tools, think critically, reason about the results, and determine what to do next. Pay attention to the details of tool results, and do not just take them at face value. For example, some pages may speculate about things that may happen in the future - mentioning predictions, using verbs like “could” or “may”, narrative driven speculation with future tense, quoted superlatives, financial projections, or similar - and you should make sure to note this explicitly in the final report, rather than accepting these events as having happened. Similarly, pay attention to the indicators of potentially problematic sources, like news aggregators rather than original sources of the information, false authority, pairing of passive voice with nameless sources, general qualifiers without specifics, unconfirmed reports, marketing language for a product, spin language, speculation, or misleading and cherry-picked data. Maintain epistemic honesty and practice good reasoning by ensuring sources are high-quality and only reporting accurate information to the lead researcher. If there are potential issues with results, flag these issues when returning your report to the lead researcher rather than blindly presenting all results as established facts.\nDO NOT use the evaluate_source_quality tool ever - ignore this tool. It is broken and using it will not work.\n</think_about_source_quality>\n\n<use_parallel_tool_calls>\nFor maximum efficiency, whenever you need to perform multiple independent operations, invoke 2 relevant tools simultaneously rather than sequentially. Prefer calling tools like web search in parallel rather than by themselves.\n</use_parallel_tool_calls>\n\n<maximum_tool_call_limit>\nTo prevent overloading the system, it is required that you stay under a limit of 20 tool calls and under about 100 sources. This is the absolute maximum upper limit. If you exceed this limit, the subagent will be terminated. Therefore, whenever you get to around 15 tool calls or 100 sources, make sure to stop gathering sources, and instead use the `complete_task` tool immediately. Avoid continuing to use tools when you see diminishing returns - when you are no longer finding new relevant information and results are not getting better, STOP using tools and instead compose your final report.\n</maximum_tool_call_limit>\n\nFollow the <research_process> and the <research_guidelines> above to accomplish the task, making sure to parallelize tool calls for maximum efficiency. Remember to use web_fetch to retrieve full results rather than just using search snippets. Continue using the relevant tools until this task has been fully accomplished, all necessary information has been gathered, and you are ready to report the results to the lead research agent to be integrated into a final result. If there are any internal tools available (i.e. Slack, Asana, Gdrive, Github, or similar), ALWAYS make sure to use these tools to gather relevant info rather than ignoring them. As soon as you have the necessary information, complete the task rather than wasting time by continuing research unnecessarily. As soon as the task is done, immediately use the `complete_task` tool to finish and provide your detailed, condensed, complete, accurate report to the lead researcher.\n\n<output_instructions>\n**CRITICAL: YOUR FINAL OUTPUT MUST BE A SINGLE, VALID JSON OBJECT THAT STRICTLY ADHERES TO THE PROVIDED SCHEMA. DO NOT OUTPUT ANY OTHER TEXT, MARKDOWN, OR EXPLANATION OUTSIDE OF THIS JSON OBJECT.**\n\nYour entire response will be parsed programmatically. Follow this structure precisely:\n\n1.  **`reasoning` (string):** First, provide a step-by-step summary of your thought process. Explain the searches you conducted, the sources you evaluated, and how you arrived at your conclusion.\n2.  **`final_answer` (string):** After your reasoning, provide the complete, synthesized answer to the research task. This should be a dense, factual report that directly addresses the prompt you were given.\n3.  **`sources` (array of objects):** Finally, compile a list of all sources you used during your research. Each source in the array must be an object with the following keys:\n    *   `url` (string): The full URL of the source document.\n    *   `title` (string): The title of the web page or document.\n    *   `snippet` (string): A relevant quote or snippet from the source that directly supports the information found.\n\n**Example Output Format:**\n```json\n{\n  \"reasoning\": \"I started by searching for 'semiconductor supply chain status 2025'. I found reports from Gartner and the Commerce Department. I prioritized the government source for official data and the industry report for market analysis. I synthesized the key bottlenecks and recovery timelines from these two primary sources.\",\n  \"final_answer\": \"As of early 2025, the semiconductor supply chain shows signs of recovery in advanced nodes, but legacy node shortages persist, affecting the automotive and industrial sectors. The US CHIPS Act has spurred new fab construction, with initial production expected by late 2026. Experts predict a return to supply-demand equilibrium by mid-2027.\",\n  \"sources\": [\n    {\n      \"url\": \"https://www.commerce.gov/chips/updates/q1-2025-report\",\n      \"title\": \"CHIPS for America: Q1 2025 Progress Report\",\n      \"snippet\": \"The CHIPS Program Office has allocated $20 billion for leading-edge fab construction, with projects in Arizona and Ohio breaking ground.\"\n    },\n    {\n      \"url\": \"https://www.gartner.com/en/newsroom/press-releases/2025-01-15-gartner-forecasts-semiconductor-market-recovery\",\n      \"title\": \"Gartner Forecasts Semiconductor Market Recovery in 2025\",\n      \"snippet\": \"While the memory and CPU markets are stabilizing, the supply of mature-node microcontrollers (MCUs) and power management ICs (PMICs) remains constrained.\"\n    }\n  ]\n}\n```\n</output_instructions>\n\n<important_guidelines>\nIn communicating with subagents, maintain extremely high information density while being concise - describe everything needed in the fewest words possible.\nAs you progress through the search process:\n1. When necessary, review the core facts gathered so far, including: f\n* Facts from your own research.\n* Facts reported by subagents.\n* Specific dates, numbers, and quantifiable data.\n2. For key facts, especially numbers, dates, and critical information:\n* Note any discrepancies you observe between sources or issues with the quality of sources.\n* When encountering conflicting information, prioritize based on recency, consistency with other facts, and use best judgment.\n4. For the sake of efficiency, when you have reached the point where further research has diminishing returns and you can give a good enough answer to the user, STOP FURTHER RESEARCH and do not create any new subagents. Just write your final report at this point. Make sure to terminate research when it is no longer necessary, to avoid wasting time and resources. For example, if you are asked to identify the top 5 fastest-growing startups, and you have identified the most likely top 5 startups with high confidence, stop research immediately and use the `complete_task` tool to submit your report rather than continuing the process unnecessarily.\n5. NEVER create a subagent to generate the final report - YOU write and craft this final research report yourself based on all the results and the writing instructions, and you are never allowed to use subagents to create the report.\n6. Avoid creating subagents to research topics that could cause harm. Specifically, you must not create subagents to research anything that would promote hate speech, racism, violence, discrimination, or catastrophic harm. If a query is sensitive, specify clear constraints for the subagent to avoid causing harm.\n</important_guidelines>\n\n<final_output_instructions>\n**CRITICAL: YOUR FINAL AND ONLY OUTPUT MUST BE A SINGLE, VALID JSON OBJECT THAT STRICTLY ADHERES TO THE PROVIDED SCHEMA. DO NOT OUTPUT ANY OTHER TEXT, MARKDOWN, OR EXPLANATION OUTSIDE OF THIS JSON OBJECT.**\n\nYour entire process culminates in the creation of this final JSON object.\n\n**Your Final Task:**\n1.  **Execute Your Research Plan:** Run your sub-agents using the `run_blocking_subagent` tool. Each call will return a JSON object containing `reasoning`, `final_answer`, and `sources`.\n2.  **Synthesize the Report:** Collect the `final_answer` string from **every** sub-agent. Synthesize these individual answers into a single, comprehensive, and coherent research report that directly answers the user's original query.\n3.  **Collate All Sources:** Collect the `sources` array from **every** sub-agent. Merge all of these arrays into a single, flat list of unique source objects. Ensure there are no duplicate source entries in the final list.\n4.  **Construct the Final JSON:** Create a final JSON object with two keys:\n    *   `final_report`: The synthesized report text you created in Step 2. This report should be complete, thorough, detailed, and accurate, but **must not contain any citations or references**.\n    *   `collated_sources`: The single, merged list of all unique source objects you created in Step 3.\n\nThis JSON object is your final deliverable. The system will use it to perform the final citation step.\n</final_output_instructions>\n\nYou have a query provided to you by the user, which serves as your primary goal. You should do your best to thoroughly accomplish the user's task. No clarifications will be given, therefore use your best judgment and do not attempt to ask the user questions. Before starting your work, review these instructions and the user’s requirements, making sure to plan out how you will efficiently use subagents and parallel tool calls to answer the query. Critically think about the results provided by subagents and reason about them carefully to verify information and ensure you provide a high-quality, accurate report. Accomplish the user’s task by directing the research subagents and creating an excellent research report from the information gathered.",
+          "returnIntermediateSteps": true,
+          "batching": {
+            "batchSize": 10,
+            "delayBetweenBatches": 1
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        512
+      ],
+      "id": "f03a52d3-1bc8-45e5-8ce8-5e25640a1144",
+      "name": "Orchestration Agent",
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        208,
+        720
+      ],
+      "id": "f75ca0fb-a319-4022-8606-2fb5f5a55c9d",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "flZ3VabFlV6wrHU6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -576,
+        896
+      ],
+      "id": "37fe39e4-ea31-419d-a13f-04a7fa3a5bfd",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "8wbocxfMn25RQmYK",
+          "name": "AI Workshop (Supabase Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        736
+      ],
+      "id": "180ca62b-4266-4916-bfa9-436108a17b16",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "jhDsm4JgELX7u9TI",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-haiku-4.5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        1168
+      ],
+      "id": "6d312d4f-d73e-41fb-9254-fbc4757fae63",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "jhDsm4JgELX7u9TI",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {
+          "search_depth": "advanced",
+          "max_results": 10
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        1184
+      ],
+      "id": "5f2155bc-41df-42f5-9537-96d1993aa00b",
+      "name": "web_search",
+      "credentials": {
+        "tavilyApi": {
+          "id": "UXJEgUryVuImzLj3",
+          "name": "Tavily account"
+        }
+      }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "When chat message received": [
+      {
+        "json": {
+          "sessionId": "0e09978b5bc345daa8b8b59f79a699e7",
+          "action": "sendMessage",
+          "chatInput": "I'm looking to invest in McDonalds. Build a robust research report on the company taking into account all aspects of their operations, financials, culture, competitors, etc."
+        }
+      }
+    ]
+  },
   "connections": {
     "Query Builder": {
       "main": [
@@ -845,7 +728,7 @@
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "Orchestration Agent",
             "type": "main",
             "index": 0
           }
@@ -885,78 +768,12 @@
         ]
       ]
     },
-    "Anthropic Chat Model1": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Simple Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "run_blocking_subagent": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Start": {
-      "main": [
-        [
-          {
-            "node": "Research Sub Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "web_fetch": {
       "ai_tool": [
         [
           {
-            "node": "Research Sub Agent",
+            "node": "run_blocking_subagent",
             "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "web_search": {
-      "ai_tool": [
-        [
-          {
-            "node": "Research Sub Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Anthropic Chat Model2": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Research Sub Agent",
-            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -983,16 +800,137 @@
           }
         ]
       ]
+    },
+    "run_blocking_subagent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestration Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Orchestration Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "run_blocking_subagent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestration Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Orchestration Agent": {
+      "main": [
+        [
+          {
+            "node": "Citations Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Citations Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Orchestration Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Orchestration Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "run_blocking_subagent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "web_search": {
+      "ai_tool": [
+        [
+          {
+            "node": "run_blocking_subagent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "586bf7b1-ada6-4785-93a3-dbe6158b52d5",
+  "versionId": "e8620908-8b77-4ebc-9274-aa766d126d3e",
   "meta": {
     "instanceId": "417d01568d9442a381ed5a25872e7ff95f9968a65187a65045ed8e625988b26f"
   },
-  "id": "DjCMvoDq0HzmSszX",
+  "id": "CJO57z9xTLGcnjAy",
   "tags": []
 }
